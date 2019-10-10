@@ -204,3 +204,19 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+include_directories(include
+                    ${catkin_INCLUDE_DIRS}
+                    ${Boost_INCLUDE_DIRS}
+                    ${GSTREAMER_INCLUDE_DIRS})
+
+# for motor control node
+set(${PROJECT_NAME}_SOURCES
+    src/nodes/MotorControl/drive.cpp
+    src/nodes/MotorControl/Constants.h
+    src/nodes/MotorControl/ErrorCodes.h
+    src/nodes/MotorControl/RoboteqDevice)
+add_executable(drive ${${PROJECT_NAME}_SOURCES})
+
+target_link_libraries(drive ${catkin_LIBRARIES})
+
