@@ -55,6 +55,8 @@ add_message_files(
   Battery.msg
   ValueUnitFloat.msg
   ValueUnitInt.msg
+  IRSensors.msg
+  USIRSensors.msg
 )
 
 ## Generate services in the 'srv' folder
