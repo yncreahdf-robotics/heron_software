@@ -100,7 +100,7 @@ class Battery:
 
 	def initROS(self):
 		init_node("Heron", anonymous=True)
-		object.__setattr__(self, "publisher", Publisher("battery", BatteryMsg, queue_size=5))
+		object.__setattr__(self, "publisher", Publisher(Battery.NAME.lower(), BatteryMsg, queue_size=5))
 		object.__setattr__(self, "msg", BatteryMsg())
 		for data in self.dataSet:
 			if "topic_value" and "unit" in data.keys():
