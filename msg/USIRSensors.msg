@@ -1,2 +1,2 @@
-float64[4] gauche
-float64[4] droit
+ValueUnitFloat[4] gauche
+ValueUnitFloat[4] droit
