@@ -6,8 +6,11 @@ from json import load
 from copy import deepcopy
 
 from serial import Serial
-from rospy import Publisher, init_node, is_shutdown, ROSInterruptException
+from rospy import Publisher, init_node, is_shutdown, ROSInterruptException, get_param, has_param
 from heron.msg import Battery as BatteryMsg
+
+
+paramStr = "/heron01/battery_sensor/portUSB"
 
 
 tests = [
@@ -26,7 +29,7 @@ class Battery:
 	NAME = "Battery"
 	NB_BYTES = 17
 
-	def __init__(self, config_file_path, port="/dev/ttyUSB0"):
+	def __init__(self, config_file_path, port):
 		chdir("/".join(__file__.split("/")[:-1]))
 		object.__setattr__(self, "USBcomm", Serial(port, 19200, timeout=1))
 		getattr(self, "USBcomm").close()
@@ -151,5 +154,5 @@ class BatteryTest():
 
 
 if __name__ == "__main__":
-	battery = Battery("config/battery.json")
+	battery = Battery("config/battery.json", get_param(paramStr) if has_param(paramStr) else "/dev/ttyUSB0")
 	battery.launch()

@@ -1,5 +1,7 @@
 <launch>
   <group ns="heron01">
-    <node name="battery_sensor" pkg="heron" type="battery.py" output="screen"/>
+    <node name="battery_sensor" pkg="heron" type="battery.py" output="screen">
+      <param name="portUSB" value="/dev/ttyUSB0"/>
+    </node>
   </group>
 </launch>
