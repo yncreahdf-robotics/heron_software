@@ -1,13 +1,14 @@
 <launch>
     <group ns="heron01">
 
-        <node name="xbox_controler" pkg="joy" type="joy_node" output="screen"/>
-        <node name="controller" pkg="myHeron" type="controller.py" /> 
+        <node name="xbox_controler" pkg="joy" type="joy_node" />
+        <node name="controller" pkg="heron" type="controller.py" output="screen"/> 
 
-        <node name="drive" pkg="myHeron" type="drive" output="screen">
-		<param name="frontDriver_port" value="/dev/ttyACM0" />
-		<param name="backDriver_port" value="/dev/ttyACM1" />	
-	</node> 
+        <node name="drive" pkg="heron" type="drive" output="screen">
+		    <param name="frontDriver_port" value="/dev/ttyACM1" />
+		    <param name="backDriver_port" value="/dev/ttyACM0" />	
+	    </node> 
+
     </group>
 
 </launch>

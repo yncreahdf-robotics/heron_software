@@ -3,6 +3,9 @@ import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 
+import math
+import numpy as np
+
 # This ROS Node converts Joystick inputs from the joy node
 # into commands for Heron
 
@@ -12,12 +15,24 @@ from sensor_msgs.msg import Joy
 # axis 0 aka left stick horizonal controls angular speed
 def callback(data):
     twist = Twist()
-    twist.linear.x = data.axes[1]*1000
-    twist.linear.y = data.axes[0]*1000
+    twist.linear.x = data.axes[1] * 0.44 #robot linear speed
+    twist.linear.y = data.axes[0] * 0.44
 
-    twist.angular.z = data.axes[3]*1000
+    if(data.axes[3] == 0 and data.axes[4] == 0):
+        twist.angular.z = 0
+    else:
+        twist.angular.z = (math.atan2(-data.axes[3], -data.axes[4]) + np.pi) # 3;4
+
+    if(data.buttons[3]):
+        twist.linear.z = 1
+    if(data.buttons[1]):
+        twist.linear.z = 2
+    if(data.buttons[0]):
+        twist.linear.z = 3
+    if(data.buttons[2]):
+        twist.linear.z = 4
     
-    print("callback")
+    print("x: ", twist.linear.x, " y: ", twist.linear.y, " a: ", twist.angular.z * 360 / (2*np.pi))
     pub.publish(twist)
 
 
@@ -25,7 +40,7 @@ def callback(data):
 def start():
     # publishing to "Heron/cmd_vel" to control Heron
     global pub
-    pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+    pub = rospy.Publisher('cmd_vel', Twist, queue_size=100)
 
     # subscribed to joystick inputs on topic "joy"
     rospy.Subscriber("joy", Joy, callback)

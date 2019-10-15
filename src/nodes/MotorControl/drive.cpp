@@ -6,6 +6,9 @@ Based on the RoboteQ linux API
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
+#include <cmath>
+#include <complex>
 
 //Relative to the RoboteQ linux API
 #include "RoboteqDevice.h"
@@ -30,28 +33,81 @@ It uses x,y from linear and z from angular to calculate each motor's speed to ge
 */
 void setCommands(const geometry_msgs::Twist& msg)
 {
-	int frontRightSpeed;
-	int frontLeftSpeed;
-	int backRightSpeed;
-	int backLeftSpeed;
+	float frontRightSpeed;
+	float frontLeftSpeed;
+	float backRightSpeed;
+	float backLeftSpeed;
+
+	float Vd = sqrt(pow(msg.linear.x, 2) + pow(msg.linear.y, 2));
+	float thetad = msg.angular.z;
+
+
+	float wheelRadius = 0.05;
+	float wTowLenght = 0.20;
+	float wTowWidth = 0.22;
 
 	//Equations for mecanum wheeled robot
-	frontRightSpeed = msg.linear.x - msg.linear.y + msg.angular.z;
-	frontLeftSpeed = msg.linear.x + msg.linear.y + msg.angular.z;
-	backRightSpeed = msg.linear.x + msg.linear.y - msg.angular.z;
-	backLeftSpeed = msg.linear.x - msg.linear.y - msg.angular.z;
+
+	frontLeftSpeed = (1 / wheelRadius) * (msg.linear.x - msg.linear.y - thetad * (wTowLenght + wTowWidth));
+	frontRightSpeed = (1 / wheelRadius) * (msg.linear.x + msg.linear.y + thetad * (wTowLenght + wTowWidth));
+	backLeftSpeed = (1 / wheelRadius) * (msg.linear.x + msg.linear.y - thetad * (wTowLenght + wTowWidth));
+	backRightSpeed = (1 / wheelRadius) * (msg.linear.x - msg.linear.y + thetad * (wTowLenght + wTowWidth));
+	
+
+	cout << "Vd: " << Vd << " thetad: " << thetad << endl;
+
 
 	cout << "FL motor speed :" << frontLeftSpeed << " FR motor speed :" << frontRightSpeed << endl;
+	cout << "BL motor speed :" << backLeftSpeed << " BR motor speed :" << backRightSpeed << endl;
 
-	//Send computed speeds to the front driver
-	frontDriver.SetCommand(_GO, 1, frontRightSpeed);
-	frontDriver.SetCommand(_GO, 2, frontRightSpeed);
+	if(msg.linear.z != 0)
+	{
+		if(msg.linear.z == 2)
+		{
+			frontDriver.SetCommand(_GO, 1, 1000);
+			frontDriver.SetCommand(_GO, 2, -1000);
+			backDriver.SetCommand(_GO, 1, -1000);
+			backDriver.SetCommand(_GO, 2, 1000);
+			cout << "front right" << endl;
+		}
+		if(msg.linear.z == 1)
+		{
+			frontDriver.SetCommand(_GO, 1, -1000);
+			frontDriver.SetCommand(_GO, 2, 1000);
+			backDriver.SetCommand(_GO, 1, 1000);
+			backDriver.SetCommand(_GO, 2, -1000);
+			cout << "front left" << endl;
+		}
+		if(msg.linear.z == 3)
+		{
+			frontDriver.SetCommand(_GO, 1, 1000);
+			frontDriver.SetCommand(_GO, 2, 1000);
+			backDriver.SetCommand(_GO, 1, 1000);
+			backDriver.SetCommand(_GO, 2, 1000);
+			cout << "back right" << endl;
+		}
+		if(msg.linear.z == 4)
+		{
+			frontDriver.SetCommand(_GO, 1, -1000);
+			frontDriver.SetCommand(_GO, 2, -1000);
+			backDriver.SetCommand(_GO, 1, -1000);
+			backDriver.SetCommand(_GO, 2, -1000);
+			cout << "back left" << endl;
+		}
+	}
+
+	else
+	{
+
+		//Send computed speeds to the front driver
+		frontDriver.SetCommand(_GO, 1, frontRightSpeed * 1000/8.8);
+		frontDriver.SetCommand(_GO, 2, frontLeftSpeed * 1000)/8.8;
 	
-	cout << endl << "BL motor speed :" << backLeftSpeed << " BR motor speed :" << backRightSpeed << endl;
+		//Send computed speeds to the back driver
+		backDriver.SetCommand(_GO, 1, backRightSpeed * 1000/8.8);
+		backDriver.SetCommand(_GO, 2, backLeftSpeed * 1000/8.8);
 
-	//Send computed speeds to the back driver
-	backDriver.SetCommand(_GO, 1, backRightSpeed);
-	backDriver.SetCommand(_GO, 2, backRightSpeed);
+	}
 	
 }
 
@@ -63,15 +119,14 @@ int main(int argc, char *argv[])
 	ros::init(argc, argv, "drive");
 	ros::NodeHandle n;
 	//Subscribe to cmd_vel topic and call the setCommands function 
-	ros::Subscriber sub = n.subscribe("cmd_vel", 10, setCommands);
+	ros::Subscriber sub = n.subscribe("cmd_vel", 100, setCommands);
 
 	//Default ports for the drivers
-	string frontDriver_port = "/dev/ttyACM0";
-	string backDriver_port = "/dev/ttyACM1";
+	string frontDriver_port = "/dev/ttyACM1";
+	string backDriver_port = "/dev/ttyACM0";
 	//Ports for the drivers reasigned if needed in the launch file
 	n.getParam("frontDriver_port", frontDriver_port);
 	n.getParam("backDriver_port", backDriver_port);
-
 
 	cout << endl << "RoboteQ Motor Drivers setup :" << endl;
 	cout << "------------------------" << endl;
