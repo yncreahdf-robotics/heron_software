@@ -1,0 +1,5 @@
+<launch>
+  <group ns="heron01">
+    <node name="battery_sensor" pkg="heron" type="battery.py" output="screen"/>
+  </group>
+</launch>

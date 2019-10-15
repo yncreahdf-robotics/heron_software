@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+from os import chdir
 from json import load
 from copy import deepcopy
 
@@ -26,6 +27,7 @@ class Battery:
 	NB_BYTES = 17
 
 	def __init__(self, config_file_path, port="/dev/ttyUSB0"):
+		chdir("/".join(__file__.split("/")[:-1]))
 		object.__setattr__(self, "USBcomm", Serial(port, 19200, timeout=1))
 		getattr(self, "USBcomm").close()
 		with open(config_file_path, "r") as file:
@@ -77,8 +79,10 @@ class Battery:
 				data["value"] = int(data["value"], base=16)
 				if "coeff" in data.keys():
 					data["value"] /= data["coeff"]
+
 			elif data["name"] == "Power":
 				data["value"] = round(self["Voltage"]["value"] * self["Current"]["value"], 2)
+
 		return self.check(checkSum)
 
 	def check(self, check_sum):
@@ -99,7 +103,7 @@ class Battery:
 		return True
 
 	def initROS(self):
-		init_node("Heron", anonymous=True)
+		init_node("battery_sensor", anonymous=True)
 		object.__setattr__(self, "publisher", Publisher(Battery.NAME.lower(), BatteryMsg, queue_size=5))
 		object.__setattr__(self, "msg", BatteryMsg())
 		for data in self.dataSet:
