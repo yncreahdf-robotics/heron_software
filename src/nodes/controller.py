@@ -23,14 +23,20 @@ def callback(data):
     else:
         twist.angular.z = (math.atan2(-data.axes[3], -data.axes[4]) + np.pi) # 3;4
 
-    if(data.buttons[3]):
-        twist.linear.z = 1
-    if(data.buttons[1]):
-        twist.linear.z = 2
-    if(data.buttons[0]):
-        twist.linear.z = 3
-    if(data.buttons[2]):
-        twist.linear.z = 4
+
+    if(data.axes[7] < 0):
+        twist.linear.x = 0.44
+    if(data.axes[7] > 0):
+        twist.linear.x = -0.44
+    if(data.axes[6] < 0):
+        twist.linear.y = -0.44
+    if(data.axes[6] > 0):
+        twist.linear.y = 0.44
+    
+    # if(data.button[1]):
+    #     twist.linear.x = 0
+    #     twist.linear.y = 0
+    #     twist.angular.x = 0
     
     print("x: ", twist.linear.x, " y: ", twist.linear.y, " a: ", twist.angular.z * 360 / (2*np.pi))
     pub.publish(twist)

@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 	if (status1 != RQ_SUCCESS && status2 != RQ_SUCCESS)
 	{
 		//Exit the program
-		cout << "Error connecting to devices: " << status1 << "/" << status2 << "." << endl;
+		cout << "Error connecting to devices: " << status1 + status2 << "/2." << endl;
 		return 1;
 	}
 
