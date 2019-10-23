@@ -3,7 +3,6 @@
 
 from os import chdir
 from json import load
-from copy import deepcopy
 
 from serial import Serial
 from rospy import Publisher, init_node, is_shutdown, ROSInterruptException, get_param, has_param
@@ -31,33 +30,17 @@ class Battery:
 
 	def __init__(self, config_file_path, port):
 		chdir("/".join(__file__.split("/")[:-1]))
-		object.__setattr__(self, "USBcomm", Serial(port, 19200, timeout=1))
-		getattr(self, "USBcomm").close()
+		self.USBcomm = Serial(port, 19200, timeout=1)
+		self.USBcomm.close()
 		with open(config_file_path, "r") as file:
-			object.__setattr__(self, "dataSet", load(file))
+			self.dataSet = load(file)
 
-	def __setattr__(self, attr_name, attr_value):
-		raise TypeError("'" + Battery.NAME + "' object does not support attribute assignment " + \
-		"(attributeName > " + attr_name + ", attributeValue > " + str(attr_value))
-	def __delattr__(self, attr_name):
-		raise TypeError("'" + Battery.NAME + "' object does not support attribute deletion " + \
-		"(attributeName > " + attr_name + ")")
 	def __getitem__(self, item_name):
 		if item_name == "list":
-			return deepcopy(self.dataSet)
+			return self.dataSet
 		for data in self.dataSet:
 			if item_name == data["name"]:
-				tmp = {}
-				for key, value in data.items():
-					tmp[key] = value
-				return tmp
-		raise KeyError("'" + Battery.NAME + "' object has no item '" + item_name + "'")
-	def __setitem__(self, item_name, item_value):
-		 raise TypeError("'" + Battery.NAME + "' object does not support item assignment " + \
-		"(attributeName > " + item_name + ", attributeValue > " + str(item_value) + ")")
-	def __delitem__(self, item_name):
-		raise TypeError("'" + Battery.NAME + "' object does not support item deletion " + \
-		"(attributeName > " + item_name + ")")
+				return data
 
 	def process(self, USBdata):
 		if len(USBdata) != Battery.NB_BYTES * 2:
@@ -107,8 +90,8 @@ class Battery:
 
 	def initROS(self):
 		init_node("battery_sensor", anonymous=True)
-		object.__setattr__(self, "publisher", Publisher(Battery.NAME.lower(), BatteryMsg, queue_size=5))
-		object.__setattr__(self, "msg", BatteryMsg())
+		self.publisher = Publisher(Battery.NAME.lower(), BatteryMsg, queue_size=5)
+		self.msg = BatteryMsg()
 		for data in self.dataSet:
 			if "topic_value" and "unit" in data.keys():
 				getattr(self.msg, data["topic_value"]).unit = data["unit"]
