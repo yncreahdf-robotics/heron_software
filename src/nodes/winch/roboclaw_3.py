@@ -9,9 +9,9 @@ class Roboclaw:
 	def __init__(self, comport, rate, timeout=0.01, retries=3):
 		self.comport = comport
 		self.rate = rate
-		self.timeout = timeout;
+		self.timeout = timeout
 		self._trystimeout = retries
-		self._crc = 0;
+		self._crc = 0
 
 	#Command Enums
 	class Cmd():
@@ -115,7 +115,7 @@ class Roboclaw:
 		
 	def crc_update(self,data):
 		self._crc = self._crc ^ (data << 8)
-		for bit in range(0, 8):
+		for _ in range(0, 8):
 			if (self._crc&0x8000)  == 0x8000:
 				self._crc = ((self._crc << 1) ^ 0x1021)
 			else:
@@ -280,7 +280,7 @@ class Roboclaw:
 			failed=False
 			self._sendcommand(address,cmd)
 			data = [1,]
-			for i in range(0,args):
+			for _ in range(0,args):
 				val = self._readlong()
 				if val[0]==0:
 					failed=True
@@ -291,7 +291,7 @@ class Roboclaw:
 			crc = self._readchecksumword()
 			if crc[0]:
 				if self._crc&0xFFFF==crc[1]&0xFFFF:
-					return (data);
+					return (data)
 		return (0,0,0,0,0)
 
 	def _writechecksum(self):
@@ -595,7 +595,7 @@ class Roboclaw:
 	def _write4S444S441(self,address,cmd,val1,val2,val3,val4,val5,val6,val7):
 		trys=self._trystimeout
 		while trys:
-			self._sendcommand(self,address,cmd)
+			self._sendcommand(address,cmd)
 			self._writelong(val1)
 			self._writeslong(val2)
 			self._writelong(val3)
@@ -644,7 +644,7 @@ class Roboclaw:
 
 	#User accessible functions
 	def SendRandomData(self,cnt):
-		for i in range(0,cnt):
+		for _ in range(0,cnt):
 			byte = random.getrandbits(8)
 #			self._port.write(chr(byte))
 			self._port.write(byte.to_bytes(1, 'big'))
@@ -714,7 +714,7 @@ class Roboclaw:
 			self._sendcommand(address,self.Cmd.GETVERSION)
 			str = ""
 			passed = True
-			for i in range(0,48):
+			for _ in range(0,48):
 				data = self._port.read(1)
 				if len(data):
 					val = ord(data)
@@ -846,7 +846,7 @@ class Roboclaw:
 		return (0,0,0)
 
 	def SpeedAccelM1M2_2(self,address,accel1,speed1,accel2,speed2):
-		return self._write4S44S4(address,self.Cmd.MIXEDSPEED2ACCEL,accel,speed1,accel2,speed2)
+		return self._write4S44S4(address,self.Cmd.MIXEDSPEED2ACCEL,accel1,speed1,accel2,speed2)
 
 	def SpeedAccelDistanceM1M2_2(self,address,accel1,speed1,distance1,accel2,speed2,distance2,buffer):
 		return self._write4S444S441(address,self.Cmd.MIXEDSPEED2ACCELDIST,accel1,speed1,distance1,accel2,speed2,distance2,buffer)

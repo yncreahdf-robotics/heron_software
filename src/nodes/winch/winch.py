@@ -6,7 +6,7 @@ from std_msgs.msg import Int16
 #Windows comport name
 #rc = Roboclaw("COM14",115200)
 #Linux comport name
-rc = Roboclaw("/dev/ttyUSB0",115200)
+rc = Roboclaw("/dev/ttyACM0",115200)
  
 
 address = 0x80
@@ -71,11 +71,9 @@ def start():
 
     if (rc.Open()==0):
         rospy.loginfo("connexion failed")
-    else : rospy.loginfo("connexion ok") 
-
-
-   
-    rospy.spin()
+    else : 
+        rospy.loginfo("connexion ok") 
+        rospy.spin()
 
 if __name__ == '__main__':
     start()
