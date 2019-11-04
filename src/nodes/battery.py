@@ -25,7 +25,6 @@ tests = [
 
 class Battery:
 
-	NAME = "Battery"
 	NB_BYTES = 17
 
 	def __init__(self, config_file_path, port):
@@ -36,8 +35,6 @@ class Battery:
 			self.dataSet = load(file)
 
 	def __getitem__(self, item_name):
-		if item_name == "list":
-			return self.dataSet
 		for data in self.dataSet:
 			if item_name == data["name"]:
 				return data
@@ -76,11 +73,11 @@ class Battery:
 			return False
 		if not self["Percentage"]["value"] in range(101):
 			return False
-		if not self["Voltage"]["value"]*100 in range(50001):
+		if not self["Voltage"]["value"]*self["Voltage"]["coeff"] in range(50001):
 			return False
-		if not self["Capacity"]["value"]*1000 in range(100, 5000000):
+		if not self["Capacity"]["value"]*self["Capacity"]["coeff"] in range(100, 5000000):
 			return False
-		if not self["Current"]["value"]*1000 in range(750001):
+		if not self["Current"]["value"]*self["Current"]["coeff"] in range(750001):
 			return False
 		if not self["Remaining Time"]["value"] in range(360000):
 			return False
@@ -89,17 +86,17 @@ class Battery:
 		return True
 
 	def initROS(self):
-		init_node("battery_sensor", anonymous=True)
-		self.publisher = Publisher(Battery.NAME.lower(), BatteryMsg, queue_size=5)
+		init_node("battery_sensor")
+		self.publisher = Publisher("battery", BatteryMsg, queue_size=5)
 		self.msg = BatteryMsg()
 		for data in self.dataSet:
-			if "topic_value" and "unit" in data.keys():
-				getattr(self.msg, data["topic_value"]).unit = data["unit"]
+			if "topic_name" and "unit" in data.keys():
+				getattr(self.msg, data["topic_name"]).unit = data["unit"]
 
 	def publish(self):
 		for data in self.dataSet:
-			if "topic_value" in data.keys():
-				getattr(self.msg, data["topic_value"]).value = data["value"]
+			if "topic_name" in data.keys():
+				getattr(self.msg, data["topic_name"]).value = data["value"]
 		self.publisher.publish(self.msg)
 
 	def launch(self):
