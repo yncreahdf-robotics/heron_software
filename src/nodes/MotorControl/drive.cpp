@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-
+	// starting pose
 	double x = 0.0;
 	double y = 0.0;
 	double th = 0.0;
@@ -161,23 +161,22 @@ int main(int argc, char *argv[])
   	current_time = ros::Time::now();
   	last_time = ros::Time::now();
 
-	ros::Rate r(1.0);
+	ros::Rate r(100); // rate in Hz
 
 	while (ros::ok())
 	{
 		ros::spinOnce();
 
-		//Get values of encoders in rpm
+		//Get values of encoders in rpm (MAX 84rpm)
 		frontDriver.GetValue(_ABSPEED, 2, rpm_frontLeft);
 		frontDriver.GetValue(_ABSPEED, 1, rpm_frontRight);
 		backDriver.GetValue(_ABSPEED, 2, rpm_backLeft);
 		backDriver.GetValue(_ABSPEED, 1, rpm_backRight);
 
-		//convert rpm into speed TODO
-
-		vx = (rpm_frontLeft + rpm_frontRight + rpm_backLeft + rpm_backRight)/4;
-		vy = (- rpm_frontLeft + rpm_frontRight + rpm_backLeft - rpm_backRight)/4;
-		vth = (rpm_backRight - rpm_frontLeft) / (2*(WTOW_LENGHT + WTO_WIDTH));
+		//convert rpm into speeds
+		vx = ((2*M_PI*WHEEL_RADIUS)/60) * (rpm_frontLeft + rpm_frontRight + rpm_backLeft + rpm_backRight)/4;		// m.s-1
+		vy = ((2*M_PI*WHEEL_RADIUS)/60) * (- rpm_frontLeft + rpm_frontRight + rpm_backLeft - rpm_backRight)/4;	// m.s-1
+		vth = 2*M_PI * (rpm_backRight - rpm_frontLeft) / (2*(WTOW_LENGHT + WTO_WIDTH));		// ras.s-1
 
 
 		current_time = ros::Time::now();
