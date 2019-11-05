@@ -114,6 +114,10 @@ int main(int argc, char *argv[])
 	//Init the ROS node named "drive"
 	ros::init(argc, argv, "drive");
 	ros::NodeHandle n;
+
+	ros::MultiThreadedSpinner spinner(2);
+	
+
 	//Subscribe to cmd_vel topic and call the setCommands function 
 	ros::Subscriber sub = n.subscribe("cmd_vel", 100, setCommands);
 
@@ -165,7 +169,7 @@ int main(int argc, char *argv[])
 
 	while (ros::ok())
 	{
-		ros::spinOnce();
+		spinner.spin();
 
 		//Get values of encoders in rpm (MAX 84rpm)
 		frontDriver.GetValue(_ABSPEED, 2, rpm_frontLeft);
