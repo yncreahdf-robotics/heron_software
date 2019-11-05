@@ -8,6 +8,13 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   nav_msgs)
 
+catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES heron_package
+#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  DEPENDS system_lib
+)
+
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )

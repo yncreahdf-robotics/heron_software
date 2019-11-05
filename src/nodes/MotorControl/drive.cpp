@@ -121,6 +121,7 @@ int main(int argc, char *argv[])
 	ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
 	tf::TransformBroadcaster odom_broadcaster;
 
+
 	//Default ports for the drivers
 	string frontDriver_port = "/dev/ttyACM1";
 	string backDriver_port = "/dev/ttyACM0";
