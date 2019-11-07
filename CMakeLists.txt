@@ -6,14 +6,27 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   tf
   std_msgs
-  nav_msgs)
+  nav_msgs
+  message_generation)
+
+add_message_files(
+  FILES
+  Encoders.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES heron_package
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
 #  DEPENDS system_lib
 )
+
+
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
@@ -29,11 +42,16 @@ set(${PROJECT_NAME}_SOURCES
     src/nodes/MotorControl/drive
     src/nodes/MotorControl/Constants
     src/nodes/MotorControl/ErrorCodes
-    src/nodes/MotorControl/RoboteqDevice)
+    src/nodes/MotorControl/RoboteqDevice
+    src/nodes/MotorControl/RobotSpecs
+    
+    src/nodes/MotorControl/odom)
     
 add_executable(drive ${${PROJECT_NAME}_SOURCES})
-
 target_link_libraries(drive ${catkin_LIBRARIES})
+
+add_executable(odom ${${PROJECT_NAME}_SOURCES})
+target_link_libraries(odom ${catkin_LIBRARIES})
 
 
 
