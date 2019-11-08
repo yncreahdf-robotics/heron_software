@@ -39,20 +39,10 @@ class Driver
 		// custom msg
 		heron::Encoders encs;
 
-
-		void initEncs()
-		{
-			int enc_value;
-
-			frontDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncFl = enc_value;
-			frontDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncFr = enc_value;
-			backDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncBl = enc_value;
-			backDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncBr = enc_value;
-		}
+		int tmp_encFl = 0;
+		int tmp_encFr = 0;
+		int tmp_encBl = 0;
+		int tmp_encBr = 0;
 
 
 
@@ -100,7 +90,6 @@ class Driver
 				}
 				
 			}
-			initEncs();
 			
 		}
 
@@ -150,13 +139,20 @@ class Driver
 			//Get values of encoders in rpm (MAX 84rpm)
 			
 			frontDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncFl -= enc_value;
+			encs.EncFl = tmp_encFl - enc_value;
+			tmp_encFl = enc_value;
+
 			frontDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncFr -= enc_value;
+			encs.EncFr = tmp_encFr - enc_value;
+			tmp_encFr = enc_value;
+
 			backDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncBl -= enc_value;
+			encs.EncBl = tmp_encBl - enc_value;
+			tmp_encBl = enc_value;
+
 			backDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncBr -= enc_value;
+			encs.EncBr = tmp_encBr - enc_value;
+			tmp_encBr = enc_value;
 
 			encoders_pub.publish(encs);
 		}
