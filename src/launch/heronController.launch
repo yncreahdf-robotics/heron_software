@@ -1,8 +1,8 @@
 <launch>
     <group ns="heron01">
 
-        <param name="frontDriver_port" type="string" value="/dev/roboteq_front" />
-		<param name="backDriver_port" type="string" value="/dev/roboteq_back" />	
+        <param name="frontDriver_port" type="string" value="/dev/ttyACM1" />
+		<param name="backDriver_port" type="string" value="/dev/ttyACM2" />	
 
         <node name="xbox_controler" pkg="joy" type="joy_node" respawn="true" >
             <param name="dev" type="string" value="/dev/input/js0" />

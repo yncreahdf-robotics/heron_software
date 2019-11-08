@@ -41,10 +41,10 @@ private:
     double delta_y;
     double delta_th;
 
-    int rpm_frontLeft;
-    int rpm_frontRight;
-    int rpm_backLeft;
-    int rpm_backRight;
+    double rpm_frontLeft;
+    double rpm_frontRight;
+    double rpm_backLeft;
+    double rpm_backRight;
 
 
 public:
@@ -59,24 +59,29 @@ public:
 
     void callback(const heron::Encoders& data)
     {
-        rpm_frontLeft = data.EncFl;
-        rpm_frontRight = data.EncFr;
-        rpm_backLeft = data.EncBl;
-        rpm_backRight = data.EncBr;
+        rpm_frontLeft = data.EncFl/1993.6;
+        rpm_frontRight = data.EncFr/1993.6;
+        rpm_backLeft = data.EncBl/1993.6;
+        rpm_backRight = data.EncBr/1993.6;
 
         //convert rpm into speeds
-        vx = ((2*M_PI*WHEEL_RADIUS)/60) * (rpm_frontLeft + rpm_frontRight + rpm_backLeft + rpm_backRight)/4;		// m.s-1
-        vy = ((2*M_PI*WHEEL_RADIUS)/60) * (- rpm_frontLeft + rpm_frontRight + rpm_backLeft - rpm_backRight)/4;	// m.s-1
-        vth = 2*M_PI * (rpm_backRight - rpm_frontLeft) / (2*(WTOW_LENGHT + WTO_WIDTH));		// ras.s-1
+        // vx = ((2*M_PI*WHEEL_RADIUS)/60) * (rpm_frontLeft + rpm_frontRight + rpm_backLeft + rpm_backRight)/4;		// m.s-1
+        // vy = ((2*M_PI*WHEEL_RADIUS)/60) * (- rpm_frontLeft + rpm_frontRight + rpm_backLeft - rpm_backRight)/4;	// m.s-1
+        // vth = 2*M_PI * (rpm_backRight - rpm_frontLeft) / (2*(WTOW_LENGHT + WTO_WIDTH));		// ras.s-1
 
 
         current_time = ros::Time::now();
 
         //compute odometry in a typical way given the velocities of the robot
-        dt = (current_time - last_time).toSec();
-        delta_x = (vx * cos(th) - vy * sin(th)) * dt;
-        delta_y = (vx * sin(th) + vy * cos(th)) * dt;
-        delta_th = vth * dt;
+        // dt = (current_time - last_time).toSec();
+        // delta_x = (vx * cos(th) - vy * sin(th)) * dt;
+        // delta_y = (vx * sin(th) + vy * cos(th)) * dt;
+        // delta_th = vth * dt;
+
+
+        delta_x = (2*M_PI*WHEEL_RADIUS) * (rpm_frontLeft + rpm_frontRight + rpm_backLeft + rpm_backRight)/4;		// m.s-1
+        delta_y = (2*M_PI*WHEEL_RADIUS) * (- rpm_frontLeft + rpm_frontRight + rpm_backLeft - rpm_backRight)/4;	// m.s-1
+        delta_th = 2*M_PI * (rpm_backRight - rpm_frontLeft) / (2*(WTOW_LENGHT + WTO_WIDTH));		// ras.s-1
 
         x += delta_x;
         y += delta_y;
@@ -89,7 +94,7 @@ public:
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.stamp = current_time;
         odom_trans.header.frame_id = "odom";
-        odom_trans.child_frame_id = "base_link";
+        odom_trans.child_frame_id = "map";
 
         odom_trans.transform.translation.x = x;
         odom_trans.transform.translation.y = y;
@@ -111,7 +116,7 @@ public:
         odom.pose.pose.orientation = odom_quat;
 
         //set the velocity
-        odom.child_frame_id = "base_link";
+        odom.child_frame_id = "map";
         odom.twist.twist.linear.x = vx;
         odom.twist.twist.linear.y = vy;
         odom.twist.twist.angular.z = vth;

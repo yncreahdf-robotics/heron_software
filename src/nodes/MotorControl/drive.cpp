@@ -26,18 +26,34 @@ using namespace std;
 class Driver
 {
 	private:
-	ros::NodeHandle n;
+		ros::NodeHandle n;
 
-	//Subscribe to cmd_vel topic and call the setCommands function 
-	ros::Subscriber sub;
-	ros::Publisher encoders_pub;
+		//Subscribe to cmd_vel topic and call the setCommands function 
+		ros::Subscriber sub;
+		ros::Publisher encoders_pub;
 
-	//Create 2 driver objects for both front motors and back ones
-	RoboteqDevice frontDriver;
-	RoboteqDevice backDriver;
+		//Create 2 driver objects for both front motors and back ones
+		RoboteqDevice frontDriver;
+		RoboteqDevice backDriver;
 
-	// custom msg
-	heron::Encoders encs;
+		// custom msg
+		heron::Encoders encs;
+
+
+		void initEncs()
+		{
+			int enc_value;
+
+			frontDriver.GetValue(_ABCNTR, 2, enc_value);
+			encs.EncFl = enc_value;
+			frontDriver.GetValue(_ABCNTR, 1, enc_value);
+			encs.EncFr = enc_value;
+			backDriver.GetValue(_ABCNTR, 2, enc_value);
+			encs.EncBl = enc_value;
+			backDriver.GetValue(_ABCNTR, 1, enc_value);
+			encs.EncBr = enc_value;
+		}
+
 
 
 	public:
@@ -73,8 +89,18 @@ class Driver
 			}
 			else
 			{
-				return 0;
+				if (frontDriver.IsConnected() && backDriver.IsConnected())
+				{
+					cout << "RoboteQ drivers working fine" << endl;
+					return 0;
+				}
+				else
+				{
+					return 1;
+				}
+				
 			}
+			initEncs();
 			
 		}
 
@@ -123,15 +149,15 @@ class Driver
 
 			//Get values of encoders in rpm (MAX 84rpm)
 			
-			frontDriver.GetValue(_ABSPEED, 2, enc_value);
-			encs.EncFl = enc_value;
-			frontDriver.GetValue(_ABSPEED, 1, enc_value);
-			encs.EncFr = enc_value;
-			backDriver.GetValue(_ABSPEED, 2, enc_value);
-			encs.EncBl = enc_value;
-			backDriver.GetValue(_ABSPEED, 1, enc_value);
-			encs.EncBr = enc_value;
-			
+			frontDriver.GetValue(_ABCNTR, 2, enc_value);
+			encs.EncFl -= enc_value;
+			frontDriver.GetValue(_ABCNTR, 1, enc_value);
+			encs.EncFr -= enc_value;
+			backDriver.GetValue(_ABCNTR, 2, enc_value);
+			encs.EncBl -= enc_value;
+			backDriver.GetValue(_ABCNTR, 1, enc_value);
+			encs.EncBr -= enc_value;
+
 			encoders_pub.publish(encs);
 		}
 
@@ -149,12 +175,14 @@ int main(int argc, char *argv[])
 
 	drivers.connect();
 
-	ros::Rate r(100);
-	while (ros::ok())
-	{
-		ros::spinOnce();
-		r.sleep();
-	}
+
+	// ros::Rate r(200);
+	// while (ros::ok())
+	// {
+	// 	ros::spinOnce();
+	// 	r.sleep();
+	// }
+	ros::spin();
 
 	drivers.disconnect();
 
