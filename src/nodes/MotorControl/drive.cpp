@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 	Driver drivers;
 
 	//Subscribe to cmd_vel topic and call the setCommands function 
-	ros::Subscriber sub = drivers.n.subscribe("cmd_vel", 100, setCommands);
+	ros::Subscriber sub = drivers.n.subscribe("cmd_vel", 100, drivers.setCommands);
 	ros::Publisher encoders_pub = drivers.n.advertise<heron::Encoders>("sensors_enc", 10);
 
 
