@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# coding: utf-8
 
 
 from os import chdir
@@ -29,7 +30,7 @@ class Battery:
 
 	def __init__(self, config_file_path, port):
 		chdir("/".join(__file__.split("/")[:-1]))
-		self.USBcomm = Serial(port, 19200, timeout=1)
+		self.USBcomm = Serial(port, 19200)
 		self.USBcomm.close()
 		with open(config_file_path, "r") as file:
 			self.dataSet = load(file)
@@ -104,7 +105,7 @@ class Battery:
 			self.initROS()
 			self.USBcomm.open()
 			while not is_shutdown():
-				if self.process(self.USBcomm.readline().hex()):
+				if self.process(self.USBcomm.read(size=Battery.NB_BYTES).hex()):
 					self.publish()
 				print(self)
 		except ROSInterruptException:
