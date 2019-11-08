@@ -122,14 +122,16 @@ class Driver
 			backDriver.SetCommand(_GO, 2, backLeftSpeed * 1000/8.8);
 
 			//Get values of encoders in rpm (MAX 84rpm)
-			enc_value = encs.EncFl;
+			
 			frontDriver.GetValue(_ABSPEED, 2, enc_value);
-			enc_value = encs.EncFr;
+			encs.EncFl = enc_value;
 			frontDriver.GetValue(_ABSPEED, 1, enc_value);
-			enc_value = encs.EncBl;
+			encs.EncFr = enc_value;
 			backDriver.GetValue(_ABSPEED, 2, enc_value);
-			enc_value = encs.EncBr;
+			encs.EncBl = enc_value;
 			backDriver.GetValue(_ABSPEED, 1, enc_value);
+			encs.EncBr = enc_value;
+			
 			encoders_pub.publish(encs);
 		}
 
