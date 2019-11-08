@@ -127,13 +127,6 @@ class Battery:
 		self.USBcomm.close()
 
 
-class BatteryTest():
-	def __init__(self, port="/dev/ttyUSB0"):
-		self.USBcomm = Serial(port, 19200, timeout=1)
-		while True:
-			print(self.USBcomm.readline().hex())
-
-
 if __name__ == "__main__":
 	battery = Battery("config/battery.json", get_param(paramStr) if has_param(paramStr) else "/dev/ttyUSB0")
 	battery.launch()
