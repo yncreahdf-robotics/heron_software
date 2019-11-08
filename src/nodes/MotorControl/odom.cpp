@@ -19,13 +19,42 @@ using namespace std;
 
 class ProcessOdom
 {
+private:
+    ros::NodeHandle n;
+    ros::Publisher odom_pub;
+    ros::Subscriber sub;
+
+    tf::TransformBroadcaster odom_broadcaster;
+
+    ros::Time current_time, last_time;
+
+    double x = 0;
+    double y = 0;
+    double th = 0;
+
+    double vx;
+    double vy;
+    double vth;
+
+    double dt;
+    double delta_x;
+    double delta_y;
+    double delta_th;
+
+    int rpm_frontLeft;
+    int rpm_frontRight;
+    int rpm_backLeft;
+    int rpm_backRight;
+
+
 public:
     ProcessOdom()
     {
-        sub = n.subscribe("sensor_enc", 100, callback);
-
+        cout << "Initialize Odom" << endl;
+        sub = n.subscribe("sensor_encs", 10, &ProcessOdom::callback, this);
         odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
     }
+    ~ProcessOdom() {}
 
 
     void callback(const heron::Encoders& data)
@@ -93,33 +122,6 @@ public:
         last_time = current_time;
     }
 
-private:
-    ros::NodeHandle n;
-    ros::Publisher odom_pub;
-    ros::Subscriber sub;
-
-    tf::TransformBroadcaster odom_broadcaster;
-
-    ros::Time current_time, last_time;
-
-    double x = 0.0;
-    double y = 0.0;
-    double th = 0.0;
-
-    double vx;
-    double vy;
-    double vth;
-
-    double dt;
-    double delta_x;
-    double delta_y;
-    double delta_th;
-
-    int rpm_frontLeft;
-    int rpm_frontRight;
-    int rpm_backLeft;
-    int rpm_backRight;
-
 
 };//End of class ProcessOdom
 
@@ -130,7 +132,6 @@ int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "odom2");
 	
-    cout << "odom_Node Started" << endl;
     ProcessOdom POdom;
 
     ros::spin();

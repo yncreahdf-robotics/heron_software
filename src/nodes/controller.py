@@ -3,8 +3,8 @@ import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 
-import math
-import numpy as np
+from math import pi, atan2
+
 
 # This ROS Node converts Joystick inputs from the joy node
 # into commands for Heron
@@ -21,7 +21,7 @@ def callback(data):
     if(data.axes[3] == 0 and data.axes[4] == 0):
         twist.angular.z = 0
     else:
-        twist.angular.z = (math.atan2(-data.axes[3], -data.axes[4]) + np.pi) # 3;4
+        twist.angular.z = (atan2(-data.axes[3], -data.axes[4]) + pi) # 3;4
 
 
     if(data.axes[7] < 0):
@@ -38,7 +38,7 @@ def callback(data):
     #     twist.linear.y = 0
     #     twist.angular.x = 0
     
-    print("x: ", twist.linear.x, " y: ", twist.linear.y, " a: ", twist.angular.z * 360 / (2*np.pi))
+    print("x: ", twist.linear.x, " y: ", twist.linear.y, " a: ", twist.angular.z * 360 / (2*pi))
     pub.publish(twist)
 
 
