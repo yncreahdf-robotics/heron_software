@@ -41,10 +41,10 @@ private:
     double delta_y;
     double delta_th;
 
-    double rpm_frontLeft;
-    double rpm_frontRight;
-    double rpm_backLeft;
-    double rpm_backRight;
+    double r_frontLeft;
+    double r_frontRight;
+    double r_backLeft;
+    double r_backRight;
 
 
 public:
@@ -59,29 +59,23 @@ public:
 
     void callback(const heron::Encoders& data)
     {
-        rpm_frontLeft = data.EncFl/1993.6;
-        rpm_frontRight = data.EncFr/1993.6;
-        rpm_backLeft = data.EncBl/1993.6;
-        rpm_backRight = data.EncBr/1993.6;
-
-        //convert rpm into speeds
-        // vx = ((2*M_PI*WHEEL_RADIUS)/60) * (rpm_frontLeft + rpm_frontRight + rpm_backLeft + rpm_backRight)/4;		// m.s-1
-        // vy = ((2*M_PI*WHEEL_RADIUS)/60) * (- rpm_frontLeft + rpm_frontRight + rpm_backLeft - rpm_backRight)/4;	// m.s-1
-        // vth = 2*M_PI * (rpm_backRight - rpm_frontLeft) / (2*(WTOW_LENGHT + WTO_WIDTH));		// ras.s-1
-
+        // calculate the roatation made by each wheel
+        r_frontLeft = data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT;
+        r_frontRight = data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT;
+        r_backLeft = data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT;
+        r_backRight = data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT;
 
         current_time = ros::Time::now();
 
-        //compute odometry in a typical way given the velocities of the robot
-        // dt = (current_time - last_time).toSec();
-        // delta_x = (vx * cos(th) - vy * sin(th)) * dt;
-        // delta_y = (vx * sin(th) + vy * cos(th)) * dt;
-        // delta_th = vth * dt;
+        dt = (current_time - last_time).toSec();
 
+        delta_x = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;
+        delta_y = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight + r_backLeft - r_backRight)/4;
+        delta_th = 2*M_PI * (r_backRight - r_frontLeft) / (2*(WTOW_LENGHT + WTO_WIDTH));
 
-        delta_x = (2*M_PI*WHEEL_RADIUS) * (rpm_frontLeft + rpm_frontRight + rpm_backLeft + rpm_backRight)/4;		// m.s-1
-        delta_y = (2*M_PI*WHEEL_RADIUS) * (- rpm_frontLeft + rpm_frontRight + rpm_backLeft - rpm_backRight)/4;	// m.s-1
-        delta_th = 2*M_PI * (rpm_backRight - rpm_frontLeft) / (2*(WTOW_LENGHT + WTO_WIDTH));		// ras.s-1
+        vth = delta_th / dt;
+        vx = delta_x / dt;
+        vy = delta_y / dt;
 
         x += delta_x;
         y += delta_y;
