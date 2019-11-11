@@ -101,7 +101,7 @@ void setCommands(const geometry_msgs::Twist& msg)
 
 		//Send computed speeds to the front driver
 		frontDriver.SetCommand(_GO, 1, frontRightSpeed * 1000/8.8);
-		frontDriver.SetCommand(_GO, 2, frontLeftSpeed * 1000)/8.8;
+		frontDriver.SetCommand(_GO, 2, frontLeftSpeed * 1000/8.8);
 	
 		//Send computed speeds to the back driver
 		backDriver.SetCommand(_GO, 1, backRightSpeed * 1000/8.8);
