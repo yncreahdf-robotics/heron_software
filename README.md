@@ -1,5 +1,29 @@
 # heron_software
 
+This is a ROS package.
+
+> Requirements :
+> - Ubuntu 16.04 LTS 
+> - ROS kinetic
+> - catkin tools
+
+## Getting Started !
+
+First clone this repository in your catkin workspace :
+    
+    ~ cd catkin_ws
+    catkin_ws git clone <url>
+
+Then build using catkin tools
+
+    catkin build
+
+Finally source
+
+    source /devel/setup.bash
+
+Now you are ready for next section.
+
 ## Launch
 You can easily launch all nodes required to use the Robot by typing in a terminal :
 
@@ -17,15 +41,22 @@ Here is a list of the nodes :
 - controller
 - joy_node (from external package xbox_controller)
 
-> drive is used to **setup the communication** between the computer and the physical **RoboteQ drivers**. AND to send commands to control the motors.
+### drive
+- **Sets up the communication** between the computer and the physical **RoboteQ drivers**. 
+- Sends **commands** to control the **motors** via the drivers.
+- Gets **feedbacks** from **encoders** and publishes them. 
 
-> odom is used to **compute** and **publish** odometry over ROS using tf
+> Based on the API provided by RoboteQ the drivers manufacturer.
 
-> controller translate inputs from **Xbox controller** to Twist for the robot to move.
+### odom
+**Computes** and **publishes** odometry over ROS using tf.
 
-Usefull command :
+### controller
+Translates inputs from **Xbox controller** to Twist to make the robot move.
 
-    rosnode info
+*Usefull command :*
+
+    rosnode info <node>
 
 ---------------------------
 ## Usefull ROS Topics
@@ -42,7 +73,7 @@ The following topics will be `/Heron01/...`
 |`sensor_encs`|custom|drive|odom|
 |`joy`|*Joy*|joy_node (from external package)|controller|
 
-Usefull commands:
+*Usefull commands :*
 
     rostopic list
     rostopic echo <topic>
