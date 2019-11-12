@@ -128,5 +128,5 @@ class Battery:
 
 
 if __name__ == "__main__":
-	battery = Battery("battery.json", get_param(paramStr) if has_param(paramStr) else "/dev/ttyUSB0")
+	battery = Battery("battery.json", get_param(paramStr) if has_param(paramStr) else "/dev/battery")
 	battery.launch()
