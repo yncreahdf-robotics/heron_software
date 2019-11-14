@@ -52,6 +52,18 @@ class Converter:
 		configByte += getNbByte(payload)										# We add the number of bytes for the payload
 		return configByte
 
+	def createMsgID(serviceID: int, nodeID: int) -> int:
+		if serviceID > 0b11111:		# We check that serviceID is not too large.
+			raise ValueError("serviceID is too large: " + str(serviceID))
+		if nodeID > 0b111111:		# We check that nodeID is not too large.
+			raise ValueError("nodeId is too large: " + str(nodeID))
+		# The msg ID contains the nodeID on his 6 less signiicant bits, and the service ID on his next 5.
+		serviceID = format(serviceID, "010b")
+		msgID = serviceID + format(nodeID, "06b")
+		msgID = int(msgID, base=2)
+		return msgID
+	createMsgID = staticmethod(createMsgID)
+
 
 def printByte(nombre: int) -> None:
 	nombre = format(nombre, "08b")			# We create the associated str-object with the binary number
@@ -64,15 +76,7 @@ def printByte(nombre: int) -> None:
 
 if __name__ == "__main__":
 	try:
-		converter = Converter()
-		printByte(converter.createConfigByte(0xffff, "", Converter.DATA))
-		printByte(converter.createConfigByte(0xffff, "", Converter.REMOTE))
-		printByte(converter.createConfigByte(0xffff, "2",  Converter.DATA))
-		printByte(converter.createConfigByte(0xffff, "a2", Converter.REMOTE))
-		printByte(converter.createConfigByte(0xffff, "fff", Converter.REMOTE))
-		converter = Converter(Converter.LARGE)
-		printByte(converter.createConfigByte(0x10000, "", Converter.REMOTE))
-		printByte(converter.createConfigByte(0x10000, "",  Converter.DATA))
+		print(format(Converter.createMsgID(10, 43), "x"))
 	except KeyboardInterrupt:
 		pass
 	finally:
