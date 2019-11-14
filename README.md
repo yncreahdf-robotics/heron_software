@@ -2,16 +2,16 @@
 
 This is a ROS package.
 
-> Requirements :
-> - Ubuntu 16.04 LTS 
-> - ROS kinetic
-> - catkin tools
+**Requirements :**
+- Ubuntu 16.04 LTS 
+- ROS kinetic
+- catkin tools
 
 ## Getting Started !
 
 First clone this repository in your catkin workspace :
     
-    ~ cd catkin_ws
+    cd catkin_ws
     catkin_ws git clone <url>
 
 Then build using catkin tools
