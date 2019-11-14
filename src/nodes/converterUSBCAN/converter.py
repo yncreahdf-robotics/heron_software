@@ -37,9 +37,14 @@ class Converter:
 		self.idMsgType = idMsgType
 
 	def createConfigByte(self, idMsg: Union[int, str], payload: Union[int, str], typeFrame: int = DATA) -> int:
-		idMsgNbByte = getNbByte(idMsg)				# We check that the number of bytes for the msg ID is not too large.
+		idMsgNbByte = getNbByte(idMsg)					# We check that the number of bytes for the msg ID is not too large.
 		if idMsgNbByte > Converter.ID_MSG_TYPE_SIZE[self.idMsgType]:
 			raise ValueError("idMsg too large: " + str(idMsg))
+		payloadNbByte = getNbByte(payload)	# We check that payload is not too to large.
+		if payloadNbByte > 0b1111:
+			raise ValueError("payload to large. It must contain at the most " + str(0b1111) + " bytes. payload: " + str(payload) + ", nb bytes: " + str(payloadNbByte))
+		if typeFrame not in Converter.TYPE_FRAME:		# We check that typeFrame is either DATA or REMOTE.
+			raise ValueError("Not a valid type frame: " + str(typeFrame))
 
 		configByte  = 0b11000000												# We set the 2 first bits to 1 for the converter USB/CAN.
 		configByte += 0b00100000 if self.idMsgType == Converter.LARGE else 0	# If necessary, we change the bit associated with the number of byte in the msg id.
@@ -60,14 +65,14 @@ def printByte(nombre: int) -> None:
 if __name__ == "__main__":
 	try:
 		converter = Converter()
-		printByte(converter.createConfigByte(0xffff, "", 0))
-		printByte(converter.createConfigByte(0xffff, "", 1))
-		printByte(converter.createConfigByte(0xffff, "2", 0))
-		printByte(converter.createConfigByte(0xffff, "a2", 0))
-		printByte(converter.createConfigByte(0xffff, "fa2", 0))
+		printByte(converter.createConfigByte(0xffff, "", Converter.DATA))
+		printByte(converter.createConfigByte(0xffff, "", Converter.REMOTE))
+		printByte(converter.createConfigByte(0xffff, "2",  Converter.DATA))
+		printByte(converter.createConfigByte(0xffff, "a2", Converter.REMOTE))
+		printByte(converter.createConfigByte(0xffff, "fff", Converter.REMOTE))
 		converter = Converter(Converter.LARGE)
-		printByte(converter.createConfigByte(0x10000, "", 0))
-		printByte(converter.createConfigByte(0x10000, "", 1))
+		printByte(converter.createConfigByte(0x10000, "", Converter.REMOTE))
+		printByte(converter.createConfigByte(0x10000, "",  Converter.DATA))
 	except KeyboardInterrupt:
 		pass
 	finally:
