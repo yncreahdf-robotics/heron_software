@@ -9,8 +9,8 @@ def getNbByte(number: Union[int, str, bytes]) -> int:
 	if type(number) == int:					# If number is an int-object, we use the format function to get the associated str-object with hexadecimal digits.
 		number = format(number, "x")
 	if type(number) == str:					# If number is a str-object, we use the fromhex method from bytes class to get the bytes-object coded in hexadecimal.
-		if(len(number)%2 == 1):				# If the number of digits is odd, we must add ourself a 0 digit at the beginning to have an even number of digit for the bytes.fromhex() method.
-			number = "0"+number
+		if(len(number) % 2 == 1):				# If the number of digits is odd, we must add ourself a 0 digit at the beginning to have an even number of digit for the bytes.fromhex() method.
+			number = "0" + number
 		number = bytes.fromhex(number)
 	if type(number) != bytes:				# We check that number is a bytes-object.
 		raise TypeError("number must be an 'int', a 'bytes' encode with hexadecimal value or a 'str' with hexadecimal digits. number: " + str(number))
@@ -64,6 +64,17 @@ class Converter:
 		return msgID
 	createMsgID = staticmethod(createMsgID)
 
+	def reverseMsgID(msgID: int) -> int:
+		msgID = format(msgID, "x")
+		if len(msgID) % 2 == 1:
+			msgID = "0" + msgID
+		reverseMsgID = msgID[-2:]
+		for i in range(1, len(msgID)):
+			reverseMsgID += msgID[-(i+1)*2:-i*2]
+		reverseMsgID = int(reverseMsgID, base=16)
+		return reverseMsgID
+	reverseMsgID = staticmethod(reverseMsgID)
+
 
 def printByte(nombre: int) -> None:
 	nombre = format(nombre, "08b")			# We create the associated str-object with the binary number
@@ -76,7 +87,7 @@ def printByte(nombre: int) -> None:
 
 if __name__ == "__main__":
 	try:
-		print(format(Converter.createMsgID(10, 43), "x"))
+		print(format(Converter.reverseMsgID(int("3202ab", base=16)), "x"))
 	except KeyboardInterrupt:
 		pass
 	finally:
