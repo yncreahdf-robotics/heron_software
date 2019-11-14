@@ -8,7 +8,7 @@ Based on the RoboteQ linux API
 #include <string.h>
 #include <math.h>
 #include <cmath>
-#include <complex>
+#include <algorithm>
 
 //Relative to the RoboteQ linux API
 #include "RoboteqDevice.h"
@@ -38,10 +38,23 @@ class Driver
 		// custom msg
 		heron::Encoders encs;
 
-		int tmp_encFl = 0;
-		int tmp_encFr = 0;
-		int tmp_encBl = 0;
-		int tmp_encBr = 0;
+		int tmp_encFl;
+		int tmp_encFr;
+		int tmp_encBl;
+		int tmp_encBr;
+
+		double saturate(double value, double sat)
+		{
+			if(value > sat)
+			{
+				return sat;
+			}
+			else
+			{
+				return value;
+			}
+			
+		}
 
 
 
@@ -50,8 +63,13 @@ class Driver
 		{	
 			cout << endl << "Initialize Drivers" << endl;
 			//Subscribe to cmd_vel topic and call the setCommands function 
-			sub = n.subscribe("cmd_vel", 100, &Driver::setCommands, this);
+			sub = n.subscribe("cmd_vel", 1, &Driver::setCommands, this);
 			encoders_pub = n.advertise<heron::Encoders>("sensor_encs", 10);
+
+			tmp_encFl = 0;
+			tmp_encFr = 0;
+			tmp_encBl = 0;
+			tmp_encBr = 0;
 		}
 		~Driver() {}
 
@@ -61,8 +79,8 @@ class Driver
 		int connect()
 		{
 			//Default ports for the drivers
-			string frontDriver_port = "/dev/ttyACM1";
-			string backDriver_port = "/dev/ttyACM0";
+			string frontDriver_port = "/dev/roboteq_front";
+			string backDriver_port = "/dev/roboteq_back";
 
 			//Ports for the drivers reasigned if needed in the launch file
 			n.getParam("frontDriver_port", frontDriver_port);
@@ -115,10 +133,13 @@ class Driver
 			float thetad = msg.angular.z;
 
 			//Equations for mecanum wheeled robot
-			frontLeftSpeed = (1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8;
-			frontRightSpeed = (1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8;
-			backLeftSpeed = (1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8;
-			backRightSpeed = (1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8;
+
+			frontLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+			frontRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+			backLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+			backRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+
+			
 
 			// usefull for debuging purpose
 			cout << "FL motor speed :" << frontLeftSpeed << " FR motor speed :" << frontRightSpeed << endl;

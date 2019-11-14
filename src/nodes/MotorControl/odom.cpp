@@ -28,9 +28,9 @@ private:
 
     ros::Time current_time, last_time;
 
-    double x = 0;
-    double y = 0;
-    double th = 0;
+    double x;
+    double y;
+    double th;
 
     double vx;
     double vy;
@@ -53,29 +53,34 @@ public:
         cout << "Initialize Odom" << endl;
         sub = n.subscribe("sensor_encs", 10, &ProcessOdom::callback, this);
         odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
+        // set origin at 0;0;0
+        x = 0;
+        y = 0;
+        th = 0;
     }
     ~ProcessOdom() {}
 
 
     void callback(const heron::Encoders& data)
     {
-        // calculate the roatation made by each wheel
-        r_frontLeft = data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT;
-        r_frontRight = data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT;
-        r_backLeft = data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT;
-        r_backRight = data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT;
-
         current_time = ros::Time::now();
-
         dt = (current_time - last_time).toSec();
 
-        delta_x = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;
-        delta_y = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight + r_backLeft - r_backRight)/4;
-        delta_th = 2*M_PI * (r_backRight - r_frontLeft) / (2*(WTOW_LENGHT + WTO_WIDTH));
+        // calculate the roatation made by each wheel
+        r_frontLeft = (data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;      // tr/s
+        r_frontRight = (data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_backLeft = (data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_backRight = (data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
 
-        vth = delta_th / dt;
-        vx = delta_x / dt;
-        vy = delta_y / dt;
+        vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
+        vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight + r_backLeft - r_backRight)/4;      // m/s
+        vth = (2*M_PI*WHEEL_RADIUS) * (((r_backRight - r_frontLeft) + (r_backLeft - r_frontRight)) / 2 ) / (2*(WTOW_LENGHT + WTO_WIDTH));                    // rad/s
+
+        cout << endl << "odom vel : " << endl << "Vx: " << vx << " Vy: " << vy << " Vth: " << vth << endl;
+
+        delta_x = (vx * cos(th) - vy * sin(th)) * dt;
+        delta_y = (vx * sin(th) + vy * cos(th)) * dt;
+        delta_th = vth * dt;
 
         x += delta_x;
         y += delta_y;
