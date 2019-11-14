@@ -18,15 +18,24 @@ def getNbByte(number: Union[int, str, bytes]) -> int:
 
 
 class Converter:
+	# ID MSG
+	STANDARD, LARGE = (0, 1)	# ID MSG type
+	ID_MSG_TYPE_SIZE = {		# ID MSG size in byte
+		STANDARD: 2,
+		LARGE: 4
+	}
+	# TYPE FRAME
+	DATA, REMOTE = (0, 1)
+	TYPE_FRAME = (DATA, REMOTE)
 
 	FIRST_BYTE = 170	# Constant use for the USB protocol with the converter USB/CAN.
 	LAST_BYTE = 85		# Constant use for the USB protocol with the converter USB/CAN.
 
-	def createConfigByte(idMsg: Union[int, str], payload: Union[int, str], typeFrame: int = 0) -> int:
-		configByte  = 0b11000000									# We set the 2 first bits to 1 for the converter USB/CAN.
-		configByte += 0b00100000 if getNbByte(idMsg) > 2 else 0		# If necessary, we change the bit associated with the number of byte in the msg id.
-		configByte += 0b00010000 if typeFrame == 1 else 0			# If necessary, we change the bit associated with the msg type (REMOTE ou DATA).
-		configByte += getNbByte(payload)							# We add the number of bytes for the payload
+	def createConfigByte(idMsg: Union[int, str], payload: Union[int, str], typeFrame: int = DATA) -> int:
+		configByte  = 0b11000000																			# We set the 2 first bits to 1 for the converter USB/CAN.
+		configByte += 0b00100000 if getNbByte(idMsg) > min(Converter.ID_MSG_TYPE_SIZE.values()) else 0		# If necessary, we change the bit associated with the number of byte in the msg id.
+		configByte += 0b00010000 if typeFrame == Converter.REMOTE else 0									# If necessary, we change the bit associated with the msg type (REMOTE ou DATA).
+		configByte += getNbByte(payload)																	# We add the number of bytes for the payload
 		return configByte
 	createConfigByte = staticmethod(createConfigByte)
 
