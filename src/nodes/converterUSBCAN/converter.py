@@ -31,13 +31,21 @@ class Converter:
 	FIRST_BYTE = 170	# Constant use for the USB protocol with the converter USB/CAN.
 	LAST_BYTE = 85		# Constant use for the USB protocol with the converter USB/CAN.
 
-	def createConfigByte(idMsg: Union[int, str], payload: Union[int, str], typeFrame: int = DATA) -> int:
-		configByte  = 0b11000000																			# We set the 2 first bits to 1 for the converter USB/CAN.
-		configByte += 0b00100000 if getNbByte(idMsg) > min(Converter.ID_MSG_TYPE_SIZE.values()) else 0		# If necessary, we change the bit associated with the number of byte in the msg id.
-		configByte += 0b00010000 if typeFrame == Converter.REMOTE else 0									# If necessary, we change the bit associated with the msg type (REMOTE ou DATA).
-		configByte += getNbByte(payload)																	# We add the number of bytes for the payload
+	def __init__(self, idMsgType: int = STANDARD):
+		if idMsgType not in Converter.ID_MSG_TYPE_SIZE.keys():	# We check that the idMsgType is a suitable value.
+			raise ValueError("Not a valid idMsgSize: " + str(idMsgType))
+		self.idMsgType = idMsgType
+
+	def createConfigByte(self, idMsg: Union[int, str], payload: Union[int, str], typeFrame: int = DATA) -> int:
+		idMsgNbByte = getNbByte(idMsg)				# We check that the number of bytes for the msg ID is not too large.
+		if idMsgNbByte > Converter.ID_MSG_TYPE_SIZE[self.idMsgType]:
+			raise ValueError("idMsg too large: " + str(idMsg))
+
+		configByte  = 0b11000000												# We set the 2 first bits to 1 for the converter USB/CAN.
+		configByte += 0b00100000 if self.idMsgType == Converter.LARGE else 0	# If necessary, we change the bit associated with the number of byte in the msg id.
+		configByte += 0b00010000 if typeFrame == Converter.REMOTE else 0		# If necessary, we change the bit associated with the msg type (REMOTE ou DATA).
+		configByte += getNbByte(payload)										# We add the number of bytes for the payload
 		return configByte
-	createConfigByte = staticmethod(createConfigByte)
 
 
 def printByte(nombre: int) -> None:
@@ -51,13 +59,15 @@ def printByte(nombre: int) -> None:
 
 if __name__ == "__main__":
 	try:
-		printByte(Converter.createConfigByte(0xffff, "", 0))
-		printByte(Converter.createConfigByte(0xffff, "", 1))
-		printByte(Converter.createConfigByte(0x10000, "", 0))
-		printByte(Converter.createConfigByte(0x10000, "", 1))
-		printByte(Converter.createConfigByte(0xffff, "2", 0))
-		printByte(Converter.createConfigByte(0xffff, "a2", 0))
-		printByte(Converter.createConfigByte(0xffff, "fa2", 0))
+		converter = Converter()
+		printByte(converter.createConfigByte(0xffff, "", 0))
+		printByte(converter.createConfigByte(0xffff, "", 1))
+		printByte(converter.createConfigByte(0xffff, "2", 0))
+		printByte(converter.createConfigByte(0xffff, "a2", 0))
+		printByte(converter.createConfigByte(0xffff, "fa2", 0))
+		converter = Converter(Converter.LARGE)
+		printByte(converter.createConfigByte(0x10000, "", 0))
+		printByte(converter.createConfigByte(0x10000, "", 1))
 	except KeyboardInterrupt:
 		pass
 	finally:
