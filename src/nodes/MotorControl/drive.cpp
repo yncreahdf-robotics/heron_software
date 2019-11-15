@@ -130,7 +130,9 @@ class Driver
 			// tmp variable to stoge encoders data
 			int enc_value;
 
+
 			float thetad = msg.angular.z;
+
 
 			//Equations for mecanum wheeled robot
 
