@@ -58,21 +58,15 @@ class Converter:
 		if nodeID > 0b111111:		# We check that nodeID is not too large.
 			raise ValueError("nodeId is too large: " + str(nodeID))
 		# The msg ID contains the nodeID on his 6 less signiicant bits, and the service ID on his next 5.
-		serviceID = format(serviceID, "010b")
-		msgID = serviceID + format(nodeID, "06b")
-		msgID = int(msgID, base=2)
+		msgID = (serviceID << 6) + nodeID	# In binary, we add the nodeID in the less significant bit
 		return msgID
 	createMsgID = staticmethod(createMsgID)
 
-	def reverseMsgID(msgID: int) -> int:
-		msgID = format(msgID, "x")
-		if len(msgID) % 2 == 1:
-			msgID = "0" + msgID
-		reverseMsgID = msgID[-2:]
-		for i in range(1, len(msgID)):
-			reverseMsgID += msgID[-(i+1)*2:-i*2]
-		reverseMsgID = int(reverseMsgID, base=16)
-		return reverseMsgID
+	def reverseMsgID(msgID: int) -> bytes:
+		reverseMsgID = ""
+		for byte in bytes.fromhex(format(msgID, "04x")):	# for each byte in msgID (it is read from left to right)
+			reverseMsgID = format(byte,'02x') + reverseMsgID	# We concatenate the byte read in the most significant bit
+		return bytes.fromhex(reverseMsgID)
 	reverseMsgID = staticmethod(reverseMsgID)
 
 
@@ -87,7 +81,7 @@ def printByte(nombre: int) -> None:
 
 if __name__ == "__main__":
 	try:
-		print(format(Converter.reverseMsgID(int("3202ab", base=16)), "x"))
+		print(Converter.reverseMsgID(Converter.createMsgID(10, 43)).hex())
 	except KeyboardInterrupt:
 		pass
 	finally:
