@@ -54,7 +54,7 @@ Here is a list of the nodes :
 ### controller
 Translates inputs from **Xbox controller** to Twist to make the robot move.
 
-*Usefull command :*
+*Useful command :*
 
     rosnode info <node>
 
@@ -73,7 +73,7 @@ The following topics will be `/Heron01/...`
 |`sensor_encs`|custom|drive|odom|
 |`joy`|*Joy*|joy_node (from external package)|controller|
 
-*Usefull commands :*
+*Useful commands :*
 
     rostopic list
     rostopic echo <topic>
