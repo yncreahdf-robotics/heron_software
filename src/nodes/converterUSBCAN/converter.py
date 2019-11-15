@@ -19,24 +19,24 @@ def getNbByte(number: Union[int, str, bytes]) -> int:
 
 class Converter:
 	# ID MSG
-	STANDARD, LARGE = (0, 1)	# ID MSG type
+	STANDARD, EXTENDED = (0, 1)	# ID MSG type
 	ID_MSG_TYPE_SIZE = {		# ID MSG size in byte
 		STANDARD: 2,
-		LARGE: 4
+		EXTENDED: 4
 	}
 	# TYPE FRAME
 	DATA, REMOTE = (0, 1)
 	TYPE_FRAME = (DATA, REMOTE)
 
-	FIRST_BYTE = 170	# Constant use for the USB protocol with the converter USB/CAN.
-	LAST_BYTE = 85		# Constant use for the USB protocol with the converter USB/CAN.
+	FIRST_BYTE = b'\xaa'	# Constant use for the USB protocol with the converter USB/CAN.
+	LAST_BYTE = b'\x55'		# Constant use for the USB protocol with the converter USB/CAN.
 
 	def __init__(self, idMsgType: int = STANDARD):
 		if idMsgType not in Converter.ID_MSG_TYPE_SIZE.keys():	# We check that the idMsgType is a suitable value.
 			raise ValueError("Not a valid idMsgSize: " + str(idMsgType))
 		self.idMsgType = idMsgType
 
-	def createConfigByte(self, idMsg: Union[int, str], payload: Union[int, str], typeFrame: int = DATA) -> int:
+	def createConfigByte(self, idMsg: Union[int, str], payload: Union[int, str], typeFrame: int = DATA) -> bytes:
 		idMsgNbByte = getNbByte(idMsg)					# We check that the number of bytes for the msg ID is not too large.
 		if idMsgNbByte > Converter.ID_MSG_TYPE_SIZE[self.idMsgType]:
 			raise ValueError("idMsg too large: " + str(idMsg))
@@ -47,10 +47,10 @@ class Converter:
 			raise ValueError("Not a valid type frame: " + str(typeFrame))
 
 		configByte  = 0b11000000												# We set the 2 first bits to 1 for the converter USB/CAN.
-		configByte += 0b00100000 if self.idMsgType == Converter.LARGE else 0	# If necessary, we change the bit associated with the number of byte in the msg id.
+		configByte += 0b00100000 if self.idMsgType == Converter.EXTENDED else 0	# If necessary, we change the bit associated with the number of byte in the msg id.
 		configByte += 0b00010000 if typeFrame == Converter.REMOTE else 0		# If necessary, we change the bit associated with the msg type (REMOTE ou DATA).
 		configByte += getNbByte(payload)										# We add the number of bytes for the payload
-		return configByte
+		return bytes.fromhex(format(configByte, "02x"))
 
 	def createMsgID(serviceID: int, nodeID: int) -> int:
 		if serviceID > 0b11111:		# We check that serviceID is not too large.
@@ -81,7 +81,8 @@ def printByte(nombre: int) -> None:
 
 if __name__ == "__main__":
 	try:
-		print(Converter.reverseMsgID(Converter.createMsgID(10, 43)).hex())
+		converter = Converter()
+		print(converter.createConfigByte("2AB", "ff", Converter.STANDARD))
 	except KeyboardInterrupt:
 		pass
 	finally:
