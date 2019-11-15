@@ -144,8 +144,8 @@ class Driver
 			
 
 			// usefull for debuging purpose
-			cout << "FL motor speed :" << frontLeftSpeed << " FR motor speed :" << frontRightSpeed << endl;
-			cout << "BL motor speed :" << backLeftSpeed << " BR motor speed :" << backRightSpeed << endl;
+			// cout << "FL motor speed :" << frontLeftSpeed << " FR motor speed :" << frontRightSpeed << endl;
+			// cout << "BL motor speed :" << backLeftSpeed << " BR motor speed :" << backRightSpeed << endl;
 
 
 			//Send computed speeds to the front driver
