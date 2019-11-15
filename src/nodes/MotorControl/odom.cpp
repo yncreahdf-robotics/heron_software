@@ -67,14 +67,14 @@ public:
         dt = (current_time - last_time).toSec();
 
         // calculate the roatation made by each wheel
-        r_frontLeft = (data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;      // tr/s
-        r_frontRight = (data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
-        r_backLeft = (data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
-        r_backRight = (data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_frontLeft = -(data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;      // tr/s
+        r_frontRight = -(data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_backLeft = -(data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_backRight = -(data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
 
         vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
-        vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight + r_backLeft - r_backRight)/4;      // m/s
-        vth = (2*M_PI*WHEEL_RADIUS) * (((r_backRight - r_frontLeft) + (r_backLeft - r_frontRight)) / 2 ) / (2*(WTOW_LENGHT + WTO_WIDTH));                    // rad/s
+        vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
+        vth = 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));                    // rad/s
 
         cout << endl << "odom vel : " << endl << "Vx: " << vx << " Vy: " << vy << " Vth: " << vth << endl;
 

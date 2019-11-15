@@ -14,17 +14,18 @@ from math import pi, atan2, sqrt
 # axis 1 aka left stick vertical controls linear speed
 # axis 0 aka left stick horizonal controls linear speed
 # axis 3 aka right stick horizonal controls angular speed
+# Warning on Xbox controller y axis is reversed !
 def callback(data):
     twist = Twist()
     twist.linear.x = data.axes[1] * 0.40 #robot linear speed
-    twist.linear.y = data.axes[0] * 0.40
+    twist.linear.y = - data.axes[0] * 0.40
 
     # if(data.axes[3] == 0 and data.axes[4] == 0):
     #     twist.angular.z = 0
     # else:
     #     twist.angular.z = (atan2(-data.axes[3], -data.axes[4]) + pi) # 3;4
 
-    twist.angular.z = data.axes[3] * pi/2
+    twist.angular.z = -data.axes[3] * pi/2
 
 
     if(data.axes[7] < 0):
@@ -32,9 +33,9 @@ def callback(data):
     if(data.axes[7] > 0):
         twist.linear.x = -0.44
     if(data.axes[6] < 0):
-        twist.linear.y = -0.44
-    if(data.axes[6] > 0):
         twist.linear.y = 0.44
+    if(data.axes[6] > 0):
+        twist.linear.y = -0.44
     
     # if(data.axes[2] > 0 or data.axes[5] > 0):
     #     twist.linear.x = 0
