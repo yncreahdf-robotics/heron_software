@@ -59,7 +59,7 @@ Translates inputs from **Xbox controller** to Twist to make the robot move.
     rosnode info <node>
 
 ---------------------------
-## Usefull ROS Topics
+## Useful ROS Topics
 
 Topics are defined under a **namespace**. If you have a fleet of robots that operate on one **ROS_MASTER**, you will have those topics preceded by the name of each robot.
 
