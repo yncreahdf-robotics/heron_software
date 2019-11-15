@@ -12,6 +12,8 @@
         <node name="controller" pkg="heron" type="controller.py" output="screen" /> 
 
         <node name="drive" pkg="heron" type="drive" output="screen" respawn="true" />
+        
+        <node name="odom" pkg="heron" type="odom" output="screen" respawn="true" />
 
     </group>
 
