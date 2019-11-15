@@ -69,6 +69,14 @@ class Converter:
 		return bytes.fromhex(reverseMsgID)
 	reverseMsgID = staticmethod(reverseMsgID)
 
+	def createPayload(data: str) -> bytes:
+		if len(data) > 0b1111*2:
+			raise ValueError("Too many hexadecimal digits.")
+
+		if len(data) % 2 == 1:
+			data = "0" + data
+		return bytes.fromhex(data)
+	createPayload = staticmethod(createPayload)
 
 def printByte(nombre: int) -> None:
 	nombre = format(nombre, "08b")			# We create the associated str-object with the binary number
@@ -81,8 +89,7 @@ def printByte(nombre: int) -> None:
 
 if __name__ == "__main__":
 	try:
-		converter = Converter()
-		print(converter.createConfigByte("2AB", "ff", Converter.STANDARD))
+		print(Converter.createPayload("ffaa"))
 	except KeyboardInterrupt:
 		pass
 	finally:
