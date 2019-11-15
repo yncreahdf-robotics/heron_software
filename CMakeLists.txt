@@ -15,17 +15,22 @@ add_message_files(
 
   FILES
   Encoders.msg
+  Battery.msg
+  ValueUnitFloat.msg
+  ValueUnitInt.msg
+  IRSensors.msg
+  USIRSensors.msg
 )
 
 generate_messages(
   DEPENDENCIES
   std_msgs
+  message_generation
 )
 
 catkin_package(
   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
 )
-
 
 
 include_directories(
