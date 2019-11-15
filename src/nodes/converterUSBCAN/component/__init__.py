@@ -2,8 +2,15 @@
 # coding: utf-8
 
 
-class SensorManager:
-    pass
+try:
+    from sensorManager import SensorManager
+except ImportError:
+    from component.sensorManager import SensorManager
+
+
+__all__ = [
+    "SensorManager"
+]
 
 
 if __name__ == "__main__":
