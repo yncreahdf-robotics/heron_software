@@ -2,7 +2,7 @@
 # coding: utf-8
 
 
-from tutorial_package import coucou
+from heron import coucou
 
 
 if __name__ == "__main__":

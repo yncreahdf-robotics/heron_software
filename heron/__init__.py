@@ -8,7 +8,7 @@ except ImportError:
     from os import system
     system("python3 -m pip install pyserial rospkg --user")
 
-from tutorial_package.hello import coucou
+from heron.hello import coucou
 
 
 if __name__ == "__main__":
