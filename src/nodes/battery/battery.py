@@ -29,7 +29,6 @@ class Battery:
 	NB_BYTES = 17
 
 	def __init__(self, config_file_path, port):
-		chdir("/".join(__file__.split("/")[:-1]))
 		self.USBcomm = Serial(port, 19200)
 		self.USBcomm.close()
 		with open(config_file_path, "r") as file:
@@ -128,5 +127,6 @@ class Battery:
 
 
 if __name__ == "__main__":
+	chdir("/".join(__file__.split("/")[:-1]))
 	battery = Battery("battery.json", get_param(paramStr) if has_param(paramStr) else "/dev/battery")
 	battery.launch()
