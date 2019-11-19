@@ -9,6 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   message_generation)
 
+catkin_python_setup()
+
 add_message_files(
   DIRECTORY
   msg
