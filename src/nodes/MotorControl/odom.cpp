@@ -94,7 +94,7 @@ public:
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.stamp = current_time;
         odom_trans.header.frame_id = "odom";
-        odom_trans.child_frame_id = "map";
+        odom_trans.child_frame_id = "base_link";
 
         odom_trans.transform.translation.x = x;
         odom_trans.transform.translation.y = y;
@@ -116,7 +116,7 @@ public:
         odom.pose.pose.orientation = odom_quat;
 
         //set the velocity
-        odom.child_frame_id = "map";
+        odom.child_frame_id = "base_link";
         odom.twist.twist.linear.x = vx;
         odom.twist.twist.linear.y = vy;
         odom.twist.twist.angular.z = vth;
