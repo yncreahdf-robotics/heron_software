@@ -60,6 +60,10 @@ add_executable(odom src/nodes/MotorControl/odom.cpp)
 target_link_libraries(odom ${catkin_LIBRARIES})
 add_dependencies(odom heron_generate_messages_cpp)
 
+add_executable(tf_broadcaster src/nodes/tf/tf_broadcaster.cpp)
+target_link_libraries(tf_broadcaster ${catkin_LIBRARIES})
+#add_dependencies(tf_broadcaster heron_generate_messages_cpp)
+
 
 
 
