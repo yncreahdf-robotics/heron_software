@@ -16,7 +16,7 @@
         <node name="odom" pkg="heron" type="odom" output="screen" respawn="true" />
 
         <include file="$(find rplidar_ros)/launch/rplidar_a3.launch"/>
-        <include file="$(find laser_filter)/examples/range_filter_example.launch"/>
+        <include file="$(find laser_filters)/examples/range_filter_example.launch"/>
 
     </group>
 
