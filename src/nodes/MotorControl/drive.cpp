@@ -191,13 +191,13 @@ int main(int argc, char *argv[])
 	drivers.connect();
 
 
-	// ros::Rate r(200);
-	// while (ros::ok())
-	// {
-	// 	ros::spinOnce();
-	// 	r.sleep();
-	// }
-	ros::spin();
+	ros::Rate r(100);
+	while (ros::ok())
+	{
+		ros::spinOnce();
+		r.sleep();
+	}
+	// ros::spin();
 
 	drivers.disconnect();
 
