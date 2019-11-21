@@ -200,7 +200,9 @@ int main(int argc, char *argv[])
 	while (ros::ok())
 	{
 		ros::spinOnce();
+
 		drivers.pubEncoders();
+		
 		r.sleep();
 	}
 	// ros::spin();
