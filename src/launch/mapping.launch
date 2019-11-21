@@ -16,7 +16,9 @@
         <node name="odom" pkg="heron" type="odom" output="screen" respawn="true" />
 
 
-        <node name="lpms_imu" pkg="lpms_imu" type="lpms_imu_node" respawn="true" />
+        <node name="lpms_imu" pkg="lpms_imu" type="lpms_imu_node" respawn="true" >
+            <param name="port" value="/dev/imu" />
+        </node>
 
         <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
             <param name="output_frame" value="odom"/>
