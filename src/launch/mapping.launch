@@ -18,6 +18,7 @@
 
         <node name="lpms_imu" pkg="lpms_imu" type="lpms_imu_node" respawn="true" >
             <param name="port" value="/dev/imu" />
+            <param name="sensor_model" value="DEVICE_LPMS_B2" />
         </node>
 
         <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
