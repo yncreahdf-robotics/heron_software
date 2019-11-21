@@ -33,7 +33,7 @@
         <include file="$(find rplidar_ros)/launch/rplidar_a3.launch"/>
 
         <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="laser_filter">
-            <rosparam command="load" file="config_laser_filter/range_filter.yaml" />
+            <rosparam command="load" file="$(find heron)/config_laser_filter/range_filter.yaml" />
         </node>
 
         <node name="tf_broadcaster" pkg="heron" type="tf_broadcaster" respawn="true" />
