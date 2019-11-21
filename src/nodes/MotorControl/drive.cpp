@@ -115,6 +115,32 @@ class Driver
 			backDriver.Disconnect();
 		}
 
+
+		void pubEncoders()
+		{
+			// tmp variable to stoge encoders data
+			int enc_value;
+
+			//Get values of encoders and calculate difference since the last time the function was called		
+			frontDriver.GetValue(_ABCNTR, 2, enc_value);
+			encs.EncFl = tmp_encFl - enc_value;
+			tmp_encFl = enc_value;
+
+			frontDriver.GetValue(_ABCNTR, 1, enc_value);
+			encs.EncFr = tmp_encFr - enc_value;
+			tmp_encFr = enc_value;
+
+			backDriver.GetValue(_ABCNTR, 2, enc_value);
+			encs.EncBl = tmp_encBl - enc_value;
+			tmp_encBl = enc_value;
+
+			backDriver.GetValue(_ABCNTR, 1, enc_value);
+			encs.EncBr = tmp_encBr - enc_value;
+			tmp_encBr = enc_value;
+
+			encoders_pub.publish(encs);
+		}
+
 		/*
 		setCommands is the callback fonction called when a Twist message is published on the command velocity topic (cmd_vel).
 		Input: 2 3 dimensions vectors -> linear and angular 
@@ -126,9 +152,6 @@ class Driver
 			float frontLeftSpeed;
 			float backRightSpeed;
 			float backLeftSpeed;
-
-			// tmp variable to stoge encoders data
-			int enc_value;
 
 
 			float thetad = msg.angular.z;
@@ -156,24 +179,6 @@ class Driver
 			backDriver.SetCommand(_GO, 1, backRightSpeed);
 			backDriver.SetCommand(_GO, 2, backLeftSpeed);
 
-			//Get values of encoders and calculate difference since the last time the function was called		
-			frontDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncFl = tmp_encFl - enc_value;
-			tmp_encFl = enc_value;
-
-			frontDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncFr = tmp_encFr - enc_value;
-			tmp_encFr = enc_value;
-
-			backDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncBl = tmp_encBl - enc_value;
-			tmp_encBl = enc_value;
-
-			backDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncBr = tmp_encBr - enc_value;
-			tmp_encBr = enc_value;
-
-			encoders_pub.publish(encs);
 		}
 
 };//End of class Drivers
@@ -195,6 +200,7 @@ int main(int argc, char *argv[])
 	while (ros::ok())
 	{
 		ros::spinOnce();
+		drivers.pubEncoders();
 		r.sleep();
 	}
 	// ros::spin();
