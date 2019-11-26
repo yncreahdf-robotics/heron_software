@@ -46,6 +46,21 @@ private:
     double r_backLeft;
     double r_backRight;
 
+    double tmp_encFl;
+    double tmp_encFr;
+    double tmp_encBl;
+    double tmp_encBr;
+
+    /*filter values to get rid of odometry jumps*/
+    double filter(double enc_value, double tmp_enc)
+    {
+        if(enc_value > ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE)
+        {
+            return tmp_enc;
+        }
+        return enc_value;
+    }
+
 
 public:
     ProcessOdom()
@@ -66,11 +81,16 @@ public:
         current_time = ros::Time::now();
         dt = (current_time - last_time).toSec();
 
+        tmp_encFl = data.EncFl;
+        tmp_encFr = data.EncFr;
+        tmp_encBl = data.EncBl;
+        tmp_encBr = data.EncBr;
+
         // calculate the roatation made by each wheel
-        r_frontLeft = -(data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;      // tr/s
-        r_frontRight = -(data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
-        r_backLeft = -(data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
-        r_backRight = -(data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_frontLeft = -(filter(data.EncFl, tmp_encFl) / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;      // tr/s
+        r_frontRight = -(filter(data.EncFr, tmp_encFr) / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_backLeft = -(filter(data.EncBl, tmp_encBl) / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_backRight = -(filter(data.EncBr, tmp_encBr) / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
 
         vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
         vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
