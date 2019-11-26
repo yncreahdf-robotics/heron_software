@@ -46,21 +46,9 @@ private:
     double r_backLeft;
     double r_backRight;
 
-    double tmp_encFl;
-    double tmp_encFr;
-    double tmp_encBl;
-    double tmp_encBr;
-
-    /*filter values to get rid of odometry jumps*/
-    double filter(double enc_value, double* tmp_enc)
-    {
-        if(enc_value > ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE)
-        {
-            return *tmp_enc;
-        }
-        *tmp_enc = enc_value;
-        return enc_value;
-    }
+    double tmp_delta_x;
+    double tmp_delta_y;
+    double tmp_delta_th;
 
 
 public:
@@ -83,10 +71,10 @@ public:
         dt = (current_time - last_time).toSec();
 
         // calculate the roatation made by each wheel
-        r_frontLeft = -(filter(data.EncFl, &tmp_encFl) / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;      // tr/s
-        r_frontRight = -(filter(data.EncFr, &tmp_encFr) / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
-        r_backLeft = -(filter(data.EncBl, &tmp_encBl) / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
-        r_backRight = -(filter(data.EncBr, &tmp_encBr) / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_frontLeft = -(data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;      // tr/s
+        r_frontRight = -(data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_backLeft = -(data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        r_backRight = -(data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
 
         vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
         vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
@@ -99,9 +87,25 @@ public:
         delta_y = (vx * sin(th) + vy * cos(th)) * dt;
         delta_th = vth * dt;
 
-        x += delta_x;
-        y += delta_y;
-        th += delta_th;
+        if(x > MAX_SPEED*dt || y > MAX_SPEED*dt)
+        {
+            x += tmp_delta_x;
+            y += tmp_delta_y;
+            th += tmp_delta_th;
+        }
+        else
+        {
+            x += delta_x;
+            y += delta_y;
+            th += delta_th;
+
+            tmp_delta_x = delta_x;
+            tmp_delta_y = delta_y;
+            tmp_delta_th = delta_th; 
+        }
+        
+
+        
 
         //since all odometry is 6DOF we'll need a quaternion created from yaw
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);

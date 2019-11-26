@@ -12,4 +12,6 @@
 
 #define ODOM_RATE 100
 
+#define MAX_SPEED 0.44
+
 #endif
