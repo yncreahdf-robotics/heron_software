@@ -87,7 +87,7 @@ public:
         delta_y = (vx * sin(th) + vy * cos(th)) * dt;
         delta_th = vth * dt;
 
-        if(x > MAX_SPEED*dt || y > MAX_SPEED*dt)
+        if(delta_x > MAX_SPEED*dt || delta_y > MAX_SPEED*dt)
         {
             x += tmp_delta_x;
             y += tmp_delta_y;
