@@ -76,6 +76,10 @@ public:
         r_backLeft = -(data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
         r_backRight = -(data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
 
+        vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
+        vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
+        vth = - 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
+
         if(vx > MAX_SPEED || vy > MAX_SPEED)
         {
             vx = tmp_vx;
@@ -84,10 +88,6 @@ public:
         }
         else
         { 
-            vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
-            vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
-            vth = - 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
-
             tmp_vx = vx;
             tmp_vy = vy;
             tmp_vth = vth;
