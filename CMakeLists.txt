@@ -64,14 +64,12 @@ add_executable(tf_broadcaster src/nodes/tf/tf_broadcaster.cpp)
 target_link_libraries(tf_broadcaster ${catkin_LIBRARIES})
 #add_dependencies(tf_broadcaster heron_generate_messages_cpp)
 
-<<<<<<< HEAD
-=======
 foreach(dir config launch meshes urdf)
 	install(DIRECTORY ${dir}/
 		DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
 endforeach(dir)
 
->>>>>>> bf226cb86f9bd39c048db1bdc7db4ba3506d1222
+
 
 
 
