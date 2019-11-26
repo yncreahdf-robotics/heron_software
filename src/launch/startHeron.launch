@@ -9,11 +9,15 @@
             <param name="autorepeat_rate" value="2" />
         </node>
 
-        <node name="controller" pkg="heron" type="controller.py" output="screen" /> 
+        <node name="controller" pkg="heron" type="controller.py"  /> 
 
         <node name="drive" pkg="heron" type="drive" output="screen" respawn="true" />
         
         <node name="odom" pkg="heron" type="odom" output="screen" respawn="true" />
+
+        <node name="battery_sensor" pkg="heron" type="battery.py" >
+            <param name="portUSB" value="/dev/battery"/>
+        </node>
 
     </group>
 
