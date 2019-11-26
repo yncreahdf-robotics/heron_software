@@ -46,9 +46,9 @@ private:
     double r_backLeft;
     double r_backRight;
 
-    double tmp_delta_x;
-    double tmp_delta_y;
-    double tmp_delta_th;
+    double tmp_vx;
+    double tmp_vy;
+    double tmp_vth;
 
 
 public:
@@ -76,9 +76,22 @@ public:
         r_backLeft = -(data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
         r_backRight = -(data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
 
-        vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
-        vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
-        vth = - 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));                    // rad/s
+        if(vx > MAX_SPEED || vy > MAX_SPEED)
+        {
+            vx = tmp_vx;
+            vy = tmp_vy;
+            vth = tmp_vth;
+        }
+        else
+        { 
+            vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
+            vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
+            vth = - 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
+
+            tmp_vx = vx;
+            tmp_vy = vy;
+            tmp_vth = vth;
+        }
 
         // debug
         // cout << endl << "odom vel : " << endl << "Vx: " << vx << " Vy: " << vy << " Vth: " << vth << endl;
@@ -87,24 +100,9 @@ public:
         delta_y = (vx * sin(th) + vy * cos(th)) * dt;
         delta_th = vth * dt;
 
-        if(delta_x > MAX_SPEED*dt || delta_y > MAX_SPEED*dt)
-        {
-            x += tmp_delta_x;
-            y += tmp_delta_y;
-            th += tmp_delta_th;
-        }
-        else
-        {
-            x += delta_x;
-            y += delta_y;
-            th += delta_th;
-
-            tmp_delta_x = delta_x;
-            tmp_delta_y = delta_y;
-            tmp_delta_th = delta_th; 
-        }
-        
-
+        x += delta_x;
+        y += delta_y;
+        th += delta_th;
         
 
         //since all odometry is 6DOF we'll need a quaternion created from yaw
