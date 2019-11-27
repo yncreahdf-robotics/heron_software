@@ -67,6 +67,11 @@ class Driver
 		// tmp variable to stoge encoders data
 		WheelsEncoders wencs;
 
+		int tmp_diff_Fl;
+		int tmp_diff_Fr;
+		int tmp_diff_Bl;
+		int tmp_diff_Br;
+
 
 	public:
 		Driver()
@@ -151,10 +156,19 @@ class Driver
 				wencs.tmp_Fr = wencs.Fr;
 				wencs.tmp_Bl = wencs.Bl;
 				wencs.tmp_Br = wencs.Br;
+
+				tmp_diff_Fl = diff_encs.EncFl;
+				tmp_diff_Fr = diff_encs.EncFr;
+				tmp_diff_Bl = diff_encs.EncBl;
+				tmp_diff_Br = diff_encs.EncBr;
 			}
 			else
 			{
 				ROS_INFO("Encoders Jump detected");
+				diff_encs.EncFl = tmp_diff_Fl;
+				diff_encs.EncFr = tmp_diff_Fr;
+				diff_encs.EncBl = tmp_diff_Bl;
+				diff_encs.EncBr = tmp_diff_Br;
 			}
 			
 			encoders_pub.publish(diff_encs);
