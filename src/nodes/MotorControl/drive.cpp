@@ -116,6 +116,7 @@ class Driver
 			}
 			else
 			{
+				initEncoders();
 				return 0;
 			}	
 		}
@@ -128,6 +129,14 @@ class Driver
 			cout << "Disconnecting Drivers ..." << endl;
 			frontDriver.Disconnect();
 			backDriver.Disconnect();
+		}
+
+		void initEncoders()
+		{
+			frontDriver.GetValue(_ABCNTR, 2, wencs.tmp_Fl);
+			frontDriver.GetValue(_ABCNTR, 1, wencs.tmp_Fr);
+			backDriver.GetValue(_ABCNTR, 2, wencs.tmp_Bl);
+			backDriver.GetValue(_ABCNTR, 1, wencs.tmp_Br);
 		}
 
 
