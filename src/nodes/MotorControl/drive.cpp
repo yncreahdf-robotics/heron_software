@@ -38,11 +38,6 @@ class Driver
 		// custom msg
 		heron::Encoders encs;
 
-		int tmp_encFl;
-		int tmp_encFr;
-		int tmp_encBl;
-		int tmp_encBr;
-
 		double saturate(double value, double sat)
 		{
 			if(value > sat)
@@ -56,6 +51,18 @@ class Driver
 			
 		}
 
+		struct WheelsEncoders
+		{
+			int Fl;
+			int Fr;
+			int Bl;
+			int Br;
+
+			int tmp_Fl;
+			int tmp_Fr;
+			int tmp_Bl;
+			int tmp_Br;
+		};
 
 
 	public:
@@ -66,10 +73,6 @@ class Driver
 			sub = n.subscribe("cmd_vel", 1, &Driver::setCommands, this);
 			encoders_pub = n.advertise<heron::Encoders>("sensor_encs", 10);
 
-			tmp_encFl = 0;
-			tmp_encFr = 0;
-			tmp_encBl = 0;
-			tmp_encBr = 0;
 		}
 		~Driver() {}
 
@@ -119,25 +122,32 @@ class Driver
 		void pubEncoders()
 		{
 			// tmp variable to stoge encoders data
-			int enc_value;
+			WheelsEncoders wencs;
 
 			//Get values of encoders and calculate difference since the last time the function was called		
-			frontDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncFl = tmp_encFl - enc_value;
-			tmp_encFl = enc_value;
+			frontDriver.GetValue(_ABCNTR, 2, wencs.Fl);
+			frontDriver.GetValue(_ABCNTR, 1, wencs.Fr);
+			backDriver.GetValue(_ABCNTR, 2, wencs.Bl);
+			backDriver.GetValue(_ABCNTR, 1, wencs.Br);
 
-			frontDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncFr = tmp_encFr - enc_value;
-			tmp_encFr = enc_value;
+			if(wencs.Fl < ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE
+			&& wencs.Fr < ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE
+			&& wencs.Bl < ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE
+			&& wencs.Br < ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE)
+			{
+				encs.EncFl = wencs.tmp_Fl - wencs.Fl;
+				wencs.tmp_Fl = wencs.Fl;
+			
+				encs.EncFr = wencs.tmp_Fr - wencs.Fr;
+				wencs.tmp_Fr = wencs.Fr;
 
-			backDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncBl = tmp_encBl - enc_value;
-			tmp_encBl = enc_value;
-
-			backDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncBr = tmp_encBr - enc_value;
-			tmp_encBr = enc_value;
-
+				encs.EncBl = wencs.tmp_Bl - wencs.Bl;
+				wencs.tmp_Bl = wencs.Bl;
+			
+				encs.EncBr = wencs.tmp_Br - wencs.Br;
+				wencs.tmp_Br = wencs.Br;
+			}
+			
 			encoders_pub.publish(encs);
 		}
 
