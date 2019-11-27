@@ -36,7 +36,7 @@ class Driver
 		RoboteqDevice backDriver;
 
 		// custom msg
-		heron::Encoders encs;
+		heron::Encoders diff_encs;
 
 		double saturate(double value, double sat)
 		{
@@ -64,6 +64,9 @@ class Driver
 			int tmp_Br;
 		};
 
+		// tmp variable to stoge encoders data
+		WheelsEncoders wencs;
+
 
 	public:
 		Driver()
@@ -73,6 +76,10 @@ class Driver
 			sub = n.subscribe("cmd_vel", 1, &Driver::setCommands, this);
 			encoders_pub = n.advertise<heron::Encoders>("sensor_encs", 10);
 
+			wencs.tmp_Fl = 0;
+			wencs.tmp_Fr = 0;
+			wencs.tmp_Bl = 0;
+			wencs.tmp_Br = 0;
 		}
 		~Driver() {}
 
@@ -121,8 +128,8 @@ class Driver
 
 		void pubEncoders()
 		{
-			// tmp variable to stoge encoders data
-			WheelsEncoders wencs;
+
+			const int max = (MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT / ODOM_RATE;
 
 			//Get values of encoders and calculate difference since the last time the function was called		
 			frontDriver.GetValue(_ABCNTR, 2, wencs.Fl);
@@ -130,25 +137,27 @@ class Driver
 			backDriver.GetValue(_ABCNTR, 2, wencs.Bl);
 			backDriver.GetValue(_ABCNTR, 1, wencs.Br);
 
-			if(wencs.Fl < ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE
-			&& wencs.Fr < ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE
-			&& wencs.Bl < ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE
-			&& wencs.Br < ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT/ODOM_RATE)
-			{
-				encs.EncFl = wencs.tmp_Fl - wencs.Fl;
-				wencs.tmp_Fl = wencs.Fl;
-			
-				encs.EncFr = wencs.tmp_Fr - wencs.Fr;
-				wencs.tmp_Fr = wencs.Fr;
+			diff_encs.EncFl = wencs.tmp_Fl - wencs.Fl;
+			diff_encs.EncFr = wencs.tmp_Fr - wencs.Fr;
+			diff_encs.EncBl = wencs.tmp_Bl - wencs.Bl;
+			diff_encs.EncBr = wencs.tmp_Br - wencs.Br;
 
-				encs.EncBl = wencs.tmp_Bl - wencs.Bl;
+			if(diff_encs.EncFl < max
+			&& diff_encs.EncFr < max
+			&& diff_encs.EncBl < max
+			&& diff_encs.EncBr < max)
+			{
+				wencs.tmp_Fl = wencs.Fl;
+				wencs.tmp_Fr = wencs.Fr;
 				wencs.tmp_Bl = wencs.Bl;
-			
-				encs.EncBr = wencs.tmp_Br - wencs.Br;
 				wencs.tmp_Br = wencs.Br;
 			}
+			else
+			{
+				ROS_INFO("Encoders Jump detected");
+			}
 			
-			encoders_pub.publish(encs);
+			encoders_pub.publish(diff_encs);
 		}
 
 		/*
