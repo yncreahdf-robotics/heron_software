@@ -46,6 +46,10 @@ private:
     double r_backLeft;
     double r_backRight;
 
+    double tmp_vx;
+    double tmp_vy;
+    double tmp_vth;
+
 
 public:
     ProcessOdom()
@@ -74,7 +78,20 @@ public:
 
         vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
         vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
-        vth = - 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));                    // rad/s
+        vth = - 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
+
+        if(vx > MAX_SPEED || vy > MAX_SPEED)
+        {
+            vx = tmp_vx;
+            vy = tmp_vy;
+            vth = tmp_vth;
+        }
+        else
+        { 
+            tmp_vx = vx;
+            tmp_vy = vy;
+            tmp_vth = vth;
+        }
 
         // debug
         // cout << endl << "odom vel : " << endl << "Vx: " << vx << " Vy: " << vy << " Vth: " << vth << endl;
@@ -86,6 +103,7 @@ public:
         x += delta_x;
         y += delta_y;
         th += delta_th;
+        
 
         //since all odometry is 6DOF we'll need a quaternion created from yaw
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
