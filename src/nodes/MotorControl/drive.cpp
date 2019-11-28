@@ -200,7 +200,7 @@ class Driver
 				}
 
 			}
-			ROS_INFO("Published Encoders Fl%d Fr%d Bl%d Br%d", diff.Fl, diff.Fr, diff.Bl, diff.Br);
+			cout << "Published Encoders: " << encs_msg.EncFl << ";" << encs_msg.EncFr << ";" << encs_msg.EncBl << ";" << encs_msg.EncBr << endl;
 			// Publish the datas
 			encoders_pub.publish(encs_msg);
 		}
