@@ -179,8 +179,6 @@ class Driver
 				tmp_encs.Fr = encs.Fr;
 				tmp_encs.Bl = encs.Bl;
 				tmp_encs.Br = encs.Br;
-
-				ROS_INFO(":)");
 			}
 			else
 			{

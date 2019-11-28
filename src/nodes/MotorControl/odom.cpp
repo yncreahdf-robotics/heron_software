@@ -83,7 +83,7 @@ public:
         speed.vy = (2*M_PI*WHEEL_RADIUS) * (- diff_encs.Fl + diff_encs.Fr - diff_encs.Bl + diff_encs.Br)/4;      // m/s
         speed.vth = - 2*M_PI*WHEEL_RADIUS * (+ diff_encs.Fl - diff_encs.Fr - diff_encs.Bl + diff_encs.Br) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
 
-        if(speed.vx > MAX_SPEED+0.1 || speed.vy > MAX_SPEED+0.1)
+        if(speed.vx > MAX_SPEED + TOLERANCE_SPEED || speed.vy > MAX_SPEED + TOLERANCE_SPEED)
         {
             ROS_INFO("Speed Jump detected");
             ROS_INFO("Speeds vx%f vy%f vth%f", speed.vx, speed.vy, speed.vth);
