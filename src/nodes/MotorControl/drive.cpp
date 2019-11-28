@@ -200,7 +200,7 @@ class Driver
 				}
 
 			}
-			ROS_INFO("Published Encoders Fl%d Fr%d Bl%d Br%d", encs_msg.EncFl, encs_msg.EncFl, encs_msg.EncFl, encs_msg.EncFl);
+			ROS_INFO("Published Encoders Fl%d Fr%d Bl%d Br%d", diff.Fl, diff.Fr, diff.Bl, diff.Br);
 			// Publish the datas
 			encoders_pub.publish(encs_msg);
 		}
