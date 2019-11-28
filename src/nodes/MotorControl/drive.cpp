@@ -38,7 +38,21 @@ class Driver
 		// custom msg
 		heron::Encoders encs_msg;
 
-		/* saturate motor command */
+		const int max_encoders = (MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT / ODOM_RATE;
+
+		struct WheelsEncoders
+		{
+			int Fl, Fr, Bl, Br;
+		};
+
+		// tmp variable to stoge encoders data
+		WheelsEncoders encs;
+		WheelsEncoders tmp_encs;
+
+
+		/* 
+		Saturate motor command 
+		*/
 		double saturate(double value, double sat)
 		{
 			if(value > sat)
@@ -50,18 +64,21 @@ class Driver
 				return value;
 			}
 			
-		}
+		}// End saturate
 
-		struct WheelsEncoders
+
+		/* 
+		Initialize the encoders by loading the current 
+		value to tmp variables
+		*/
+		void initEncoders()
 		{
-			int Fl, Fr, Bl, Br;
-		};
+			frontDriver.GetValue(_ABCNTR, 2, tmp_encs.Fl);
+			frontDriver.GetValue(_ABCNTR, 1, tmp_encs.Fr);
+			backDriver.GetValue(_ABCNTR, 2, tmp_encs.Bl);
+			backDriver.GetValue(_ABCNTR, 1, tmp_encs.Br);
+		}// End initEncoders
 
-		// tmp variable to stoge encoders data
-		WheelsEncoders encs;
-		WheelsEncoders tmp_encs;
-
-		const int max = (MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT / ODOM_RATE;
 
 	public:
 		Driver()
@@ -70,8 +87,9 @@ class Driver
 			//Subscribe to cmd_vel topic and call the setCommands function 
 			sub = n.subscribe("cmd_vel", 1, &Driver::setCommands, this);
 			encoders_pub = n.advertise<heron::Encoders>("sensor_encs", 10);
-		}
-		~Driver() {}
+		}// End Constructor
+
+		~Driver() {}// End Destructor
 
 		/*
 		Initialize connection between RoboteQ drivers and computer.
@@ -104,7 +122,8 @@ class Driver
 				initEncoders();
 				return 0;
 			}	
-		}
+		}// End connect
+
 
 		/*
 		Disconnect RoboteQ drivers from computer.
@@ -114,15 +133,8 @@ class Driver
 			cout << "Disconnecting Drivers ..." << endl;
 			frontDriver.Disconnect();
 			backDriver.Disconnect();
-		}
+		}// End disconnect
 
-		void initEncoders()
-		{
-			frontDriver.GetValue(_ABCNTR, 2, tmp_encs.Fl);
-			frontDriver.GetValue(_ABCNTR, 1, tmp_encs.Fr);
-			backDriver.GetValue(_ABCNTR, 2, tmp_encs.Bl);
-			backDriver.GetValue(_ABCNTR, 1, tmp_encs.Br);
-		}
 
 		/* 
 		Get the absolute encoder value from the driver 
@@ -133,29 +145,31 @@ class Driver
 		{
 			WheelsEncoders diff;
 
-			//Get values of encoders and calculate difference since the last time the function was called		
+			//Get values of encoders through the drivers		
 			frontDriver.GetValue(_ABCNTR, 2, encs.Fl);
 			frontDriver.GetValue(_ABCNTR, 1, encs.Fr);
 			backDriver.GetValue(_ABCNTR, 2, encs.Bl);
 			backDriver.GetValue(_ABCNTR, 1, encs.Br);
 
+			// Compute the difference since the last time the function was called
 			diff.Fl = tmp_encs.Fl - encs.Fl;
 			diff.Fr = tmp_encs.Fr - encs.Fr;
 			diff.Bl = tmp_encs.Bl - encs.Bl;
 			diff.Br = tmp_encs.Br - encs.Br;
 
 			// if datas are plosible (no jump)
-			if(diff.Fl < max
-			&& diff.Fr < max
-			&& diff.Bl < max
-			&& diff.Br < max)
+			if(diff.Fl < max_encoders
+			&& diff.Fr < max_encoders
+			&& diff.Bl < max_encoders
+			&& diff.Br < max_encoders)
 			{
 				// Update the values to send to odom
 				encs_msg.EncFl = diff.Fl;
 				encs_msg.EncFr = diff.Fr;
 				encs_msg.EncBl = diff.Bl;
 				encs_msg.EncBr = diff.Br;
-
+				
+				// Store the current value for next loop
 				tmp_encs.Fl = encs.Fl;
 				tmp_encs.Fr = encs.Fr;
 				tmp_encs.Bl = encs.Bl;
@@ -169,26 +183,28 @@ class Driver
 				ROS_INFO("Encoders Jump detected");
 
 				// catch up the value error on the failing encoder(s)
-				if(encs.Fl > max)
+				if(encs.Fl > max_encoders)
 				{
 					tmp_encs.Fl = encs.Fl;
 				}
-				if(encs.Fr > max)
+				if(encs.Fr > max_encoders)
 				{
 					tmp_encs.Fr = encs.Fr;
 				}
-				if(encs.Bl > max)
+				if(encs.Bl > max_encoders)
 				{
 					tmp_encs.Bl = encs.Bl;
 				}
-				if(encs.Br > max)
+				if(encs.Br > max_encoders)
 				{
 					tmp_encs.Br = encs.Br;
 				}
 			}
 			
+			// Publish the datas
 			encoders_pub.publish(encs_msg);
 		}
+
 
 		/*
 		setCommands is the callback fonction called when a Twist message is published on the command velocity topic (cmd_vel).
@@ -214,7 +230,6 @@ class Driver
 			backRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
 
 			
-
 			// usefull for debuging purpose
 			// cout << "FL motor speed :" << frontLeftSpeed << " FR motor speed :" << frontRightSpeed << endl;
 			// cout << "BL motor speed :" << backLeftSpeed << " BR motor speed :" << backRightSpeed << endl;
@@ -254,7 +269,6 @@ int main(int argc, char *argv[])
 		
 		r.sleep();
 	}
-	// ros::spin();
 
 	drivers.disconnect();
 
