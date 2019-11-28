@@ -38,8 +38,6 @@ class Driver
 		// custom msg
 		heron::Encoders encs_msg;
 
-		const double max_encoders = (MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT / ODOM_RATE;
-
 		struct WheelsEncoders
 		{
 			int Fl, Fr, Bl, Br;
@@ -158,10 +156,10 @@ class Driver
 			diff.Br = tmp_encs.Br - encs.Br;
 
 			// if datas are plosible (no jump)
-			if(diff.Fl < max_encoders
-			&& diff.Fr < max_encoders
-			&& diff.Bl < max_encoders
-			&& diff.Br < max_encoders)
+			if(diff.Fl < MAX_DELTA_ENCODERS
+			&& diff.Fr < MAX_DELTA_ENCODERS
+			&& diff.Bl < MAX_DELTA_ENCODERS
+			&& diff.Br < MAX_DELTA_ENCODERS)
 			{
 				// Update the values to send to odom
 				encs_msg.EncFl = diff.Fl;
@@ -183,19 +181,19 @@ class Driver
 				ROS_INFO("Encoders Jump detected");
 
 				// catch up the value error on the failing encoder(s)
-				if(encs.Fl > max_encoders)
+				if(encs.Fl > MAX_DELTA_ENCODERS)
 				{
 					tmp_encs.Fl = encs.Fl;
 				}
-				if(encs.Fr > max_encoders)
+				if(encs.Fr > MAX_DELTA_ENCODERS)
 				{
 					tmp_encs.Fr = encs.Fr;
 				}
-				if(encs.Bl > max_encoders)
+				if(encs.Bl > MAX_DELTA_ENCODERS)
 				{
 					tmp_encs.Bl = encs.Bl;
 				}
-				if(encs.Br > max_encoders)
+				if(encs.Br > MAX_DELTA_ENCODERS)
 				{
 					tmp_encs.Br = encs.Br;
 				}

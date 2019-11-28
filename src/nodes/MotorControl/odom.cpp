@@ -28,8 +28,6 @@ private:
 
     ros::Time current_time, last_time;
 
-    const double max_delta_pose = ((MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * 2 * M_PI * WHEEL_RADIUS) / ODOM_RATE;
-
     struct WheelsEncoders
     {
         int Fl, Fr, Bl, Br;
@@ -85,7 +83,7 @@ public:
         speed.vy = (2*M_PI*WHEEL_RADIUS) * (- diff_encs.Fl + diff_encs.Fr - diff_encs.Bl + diff_encs.Br)/4;      // m/s
         speed.vth = - 2*M_PI*WHEEL_RADIUS * (+ diff_encs.Fl - diff_encs.Fr - diff_encs.Bl + diff_encs.Br) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
 
-        if(speed.vx > MAX_SPEED || speed.vy > MAX_SPEED)
+        if(speed.vx > MAX_SPEED+0.1 || speed.vy > MAX_SPEED+0.1)
         {
             ROS_INFO("Speed Jump detected");
         }
@@ -98,7 +96,7 @@ public:
         delta_poses.th = speed.vth * delta_poses.dt;
 
         // If delta poses are plosible, then update the pose, otherwise don't, it will publish previous ones
-        if(delta_poses.x < max_delta_pose && delta_poses.y < max_delta_pose)
+        if(delta_poses.x < MAX_DELTA_POSE && delta_poses.y < MAX_DELTA_POSE)
         {
             pose.x += delta_poses.x;
             pose.y += delta_poses.y;
