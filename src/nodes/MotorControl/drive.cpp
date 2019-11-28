@@ -160,7 +160,11 @@ class Driver
 			if(diff.Fl < MAX_DELTA_ENCODERS
 			&& diff.Fr < MAX_DELTA_ENCODERS
 			&& diff.Bl < MAX_DELTA_ENCODERS
-			&& diff.Br < MAX_DELTA_ENCODERS)
+			&& diff.Br < MAX_DELTA_ENCODERS
+			&& diff.Fl > - MAX_DELTA_ENCODERS
+			&& diff.Fr > - MAX_DELTA_ENCODERS
+			&& diff.Bl > - MAX_DELTA_ENCODERS
+			&& diff.Br > - MAX_DELTA_ENCODERS)
 			{
 				// Update the values to send to odom
 				encs_msg.EncFl = diff.Fl;
@@ -182,19 +186,19 @@ class Driver
 				ROS_INFO("Encoders Jump detected");
 
 				// catch up the value error on the failing encoder(s)
-				if(encs.Fl > MAX_DELTA_ENCODERS)
+				if(encs.Fl > MAX_DELTA_ENCODERS || encs.Fl < - MAX_DELTA_ENCODERS)
 				{
 					tmp_encs.Fl = encs.Fl;
 				}
-				if(encs.Fr > MAX_DELTA_ENCODERS)
+				if(encs.Fr > MAX_DELTA_ENCODERS || encs.Fr < - MAX_DELTA_ENCODERS)
 				{
 					tmp_encs.Fr = encs.Fr;
 				}
-				if(encs.Bl > MAX_DELTA_ENCODERS)
+				if(encs.Bl > MAX_DELTA_ENCODERS || encs.Bl < - MAX_DELTA_ENCODERS)
 				{
 					tmp_encs.Bl = encs.Bl;
 				}
-				if(encs.Br > MAX_DELTA_ENCODERS)
+				if(encs.Br > MAX_DELTA_ENCODERS || encs.Br < - MAX_DELTA_ENCODERS)
 				{
 					tmp_encs.Br = encs.Br;
 				}
