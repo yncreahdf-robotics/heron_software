@@ -192,18 +192,22 @@ class Driver
 				// catch up the value error on the failing encoder(s)
 				if(encs.Fl > MAX_DELTA_ENCODERS || encs.Fl < - MAX_DELTA_ENCODERS)
 				{
+					cout << "Fl" << encs.Fl << endl;
 					tmp_encs.Fl = encs.Fl;
 				}
 				if(encs.Fr > MAX_DELTA_ENCODERS || encs.Fr < - MAX_DELTA_ENCODERS)
 				{
+					cout << "Fr" << encs.Fr << endl;
 					tmp_encs.Fr = encs.Fr;
 				}
 				if(encs.Bl > MAX_DELTA_ENCODERS || encs.Bl < - MAX_DELTA_ENCODERS)
 				{
+					cout << "Bl" << encs.Bl << endl;
 					tmp_encs.Bl = encs.Bl;
 				}
 				if(encs.Br > MAX_DELTA_ENCODERS || encs.Br < - MAX_DELTA_ENCODERS)
 				{
+					cout << "Br" << encs.Br << endl;
 					tmp_encs.Br = encs.Br;
 				}
 
