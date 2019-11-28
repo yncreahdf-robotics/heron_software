@@ -124,9 +124,14 @@ class Driver
 			backDriver.GetValue(_ABCNTR, 1, tmp_encs.Br);
 		}
 
-
+		/* 
+		Get the absolute encoder value from the driver 
+		Filter the values to get rid of the "jumps"
+		Publish the diff over a topic to the odom 
+		*/
 		void pubEncoders()
 		{
+			WheelsEncoders diff;
 
 			//Get values of encoders and calculate difference since the last time the function was called		
 			frontDriver.GetValue(_ABCNTR, 2, encs.Fl);
@@ -134,16 +139,23 @@ class Driver
 			backDriver.GetValue(_ABCNTR, 2, encs.Bl);
 			backDriver.GetValue(_ABCNTR, 1, encs.Br);
 
-			encs_msg.EncFl = tmp_encs.Fl - encs.Fl;
-			encs_msg.EncFr = tmp_encs.Fr - encs.Fr;
-			encs_msg.EncBl = tmp_encs.Bl - encs.Bl;
-			encs_msg.EncBr = tmp_encs.Br - encs.Br;
+			diff.Fl = tmp_encs.Fl - encs.Fl;
+			diff.Fr = tmp_encs.Fr - encs.Fr;
+			diff.Bl = tmp_encs.Bl - encs.Bl;
+			diff.Br = tmp_encs.Br - encs.Br;
 
-			if(encs_msg.EncFl < max
-			&& encs_msg.EncFr < max
-			&& encs_msg.EncBl < max
-			&& encs_msg.EncBr < max)
+			// if datas are plosible (no jump)
+			if(diff.Fl < max
+			&& diff.Fr < max
+			&& diff.Bl < max
+			&& diff.Br < max)
 			{
+				// Update the values to send to odom
+				encs_msg.EncFl = diff.Fl;
+				encs_msg.EncFr = diff.Fr;
+				encs_msg.EncBl = diff.Bl;
+				encs_msg.EncBr = diff.Br;
+
 				tmp_encs.Fl = encs.Fl;
 				tmp_encs.Fr = encs.Fr;
 				tmp_encs.Bl = encs.Bl;
@@ -151,7 +163,28 @@ class Driver
 			}
 			else
 			{
+				// Don't change the values to send to odom
+				// So it sends the previous one 
+
 				ROS_INFO("Encoders Jump detected");
+
+				// catch up the value error on the failing encoder(s)
+				if(encs.Fl > max)
+				{
+					tmp_encs.Fl = encs.Fl;
+				}
+				if(encs.Fr > max)
+				{
+					tmp_encs.Fr = encs.Fr;
+				}
+				if(encs.Bl > max)
+				{
+					tmp_encs.Bl = encs.Bl;
+				}
+				if(encs.Br > max)
+				{
+					tmp_encs.Br = encs.Br;
+				}
 			}
 			
 			encoders_pub.publish(encs_msg);
