@@ -27,6 +27,9 @@ private:
     tf::TransformBroadcaster odom_broadcaster;
 
     ros::Time current_time, last_time;
+
+    const int max_delta_pose = ((MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * 2 * M_PI * WHEEL_RADIUS) / ODOM_RATE;
+
     struct WheelsEncoders
     {
         int Fl, Fr, Bl, Br;
@@ -46,12 +49,9 @@ private:
     WheelsEncoders diff_encs;
 
     Pose pose;
-    Pose tmp_pose;
     Pose delta_poses;
 
     Speed speed;
-
-    const int max_delta_pose = ((MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * 2 * M_PI * WHEEL_RADIUS) / ODOM_RATE;
 
 
 public:
@@ -65,8 +65,9 @@ public:
         pose.x = 0;
         pose.y = 0;
         pose.th = 0;
-    }
-    ~ProcessOdom() {}
+    }// End Constructor
+
+    ~ProcessOdom() {}// End Destructor
 
 
     void callback(const heron::Encoders& data)
@@ -96,6 +97,7 @@ public:
         delta_poses.y = (speed.vx * sin(pose.th) + speed.vy * cos(pose.th)) * delta_poses.dt;
         delta_poses.th = speed.vth * delta_poses.dt;
 
+        // If delta poses are plosible, then update the pose, otherwise don't, it will publish previous ones
         if(delta_poses.x < max_delta_pose && delta_poses.y < max_delta_pose)
         {
             pose.x += delta_poses.x;
@@ -104,14 +106,8 @@ public:
         }
         else
         {
-            pose.x = tmp_pose.x;
-            pose.y = tmp_pose.y;
-            pose.th = tmp_pose.th;
+            ROS_INFO("Pose Jump detected");
         }
-        
-
-        // save data
-        tmp_pose = pose;
         
 
         //since all odometry is 6DOF we'll need a quaternion created from yaw
