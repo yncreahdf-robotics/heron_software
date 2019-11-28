@@ -159,14 +159,14 @@ class Driver
 			//ROS_INFO("Encoders Fl%d Fr%d Bl%d Br%d", diff.Fl, diff.Fr, diff.Bl, diff.Br);
 
 			// if datas are plosible (no jump)
-			if(diff.Fl < MAX_DELTA_ENCODERS
-			&& diff.Fr < MAX_DELTA_ENCODERS
-			&& diff.Bl < MAX_DELTA_ENCODERS
-			&& diff.Br < MAX_DELTA_ENCODERS
-			&& diff.Fl > - MAX_DELTA_ENCODERS
-			&& diff.Fr > - MAX_DELTA_ENCODERS
-			&& diff.Bl > - MAX_DELTA_ENCODERS
-			&& diff.Br > - MAX_DELTA_ENCODERS)
+			if(diff.Fl < THRESHOLD_DELTA_ENCODERS
+			&& diff.Fr < THRESHOLD_DELTA_ENCODERS
+			&& diff.Bl < THRESHOLD_DELTA_ENCODERS
+			&& diff.Br < THRESHOLD_DELTA_ENCODERS
+			&& diff.Fl > - THRESHOLD_DELTA_ENCODERS
+			&& diff.Fr > - THRESHOLD_DELTA_ENCODERS
+			&& diff.Bl > - THRESHOLD_DELTA_ENCODERS
+			&& diff.Br > - THRESHOLD_DELTA_ENCODERS)
 			{
 				// Update the values to send to odom
 				encs_msg.EncFl = diff.Fl;
@@ -190,24 +190,20 @@ class Driver
 				ROS_INFO("Encoders Jump detected");
 
 				// catch up the value error on the failing encoder(s)
-				if(encs.Fl > MAX_DELTA_ENCODERS || encs.Fl < - MAX_DELTA_ENCODERS)
+				if(encs.Fl > THRESHOLD_DELTA_ENCODERS || encs.Fl < - THRESHOLD_DELTA_ENCODERS)
 				{
-					cout << "Fl" << encs.Fl << endl;
 					tmp_encs.Fl = encs.Fl;
 				}
-				if(encs.Fr > MAX_DELTA_ENCODERS || encs.Fr < - MAX_DELTA_ENCODERS)
+				if(encs.Fr > THRESHOLD_DELTA_ENCODERS || encs.Fr < - THRESHOLD_DELTA_ENCODERS)
 				{
-					cout << "Fr" << encs.Fr << endl;
 					tmp_encs.Fr = encs.Fr;
 				}
-				if(encs.Bl > MAX_DELTA_ENCODERS || encs.Bl < - MAX_DELTA_ENCODERS)
+				if(encs.Bl > THRESHOLD_DELTA_ENCODERS || encs.Bl < - THRESHOLD_DELTA_ENCODERS)
 				{
-					cout << "Bl" << encs.Bl << endl;
 					tmp_encs.Bl = encs.Bl;
 				}
-				if(encs.Br > MAX_DELTA_ENCODERS || encs.Br < - MAX_DELTA_ENCODERS)
+				if(encs.Br > THRESHOLD_DELTA_ENCODERS || encs.Br < - THRESHOLD_DELTA_ENCODERS)
 				{
-					cout << "Br" << encs.Br << endl;
 					tmp_encs.Br = encs.Br;
 				}
 
