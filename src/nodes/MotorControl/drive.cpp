@@ -199,9 +199,8 @@ class Driver
 					tmp_encs.Br = encs.Br;
 				}
 
-				ROS_INFO("NEW Encoders Fl%d Fr%d Bl%d Br%d", diff.Fl, diff.Fr, diff.Bl, diff.Br);
 			}
-			
+			ROS_INFO("Published Encoders Fl%d Fr%d Bl%d Br%d", encs_msg.EncFl, encs_msg.EncFl, encs_msg.EncFl, encs_msg.EncFl);
 			// Publish the datas
 			encoders_pub.publish(encs_msg);
 		}
