@@ -38,7 +38,7 @@ class Driver
 		// custom msg
 		heron::Encoders encs_msg;
 
-		const int max_encoders = (MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT / ODOM_RATE;
+		const double max_encoders = (MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT / ODOM_RATE;
 
 		struct WheelsEncoders
 		{

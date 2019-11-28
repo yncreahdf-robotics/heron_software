@@ -28,7 +28,7 @@ private:
 
     ros::Time current_time, last_time;
 
-    const int max_delta_pose = ((MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * 2 * M_PI * WHEEL_RADIUS) / ODOM_RATE;
+    const double max_delta_pose = ((MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * 2 * M_PI * WHEEL_RADIUS) / ODOM_RATE;
 
     struct WheelsEncoders
     {
