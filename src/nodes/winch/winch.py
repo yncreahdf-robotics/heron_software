@@ -2,10 +2,13 @@
 
 from math import pi, cos, sin
 
+import winch_specs as wch
 import diagnostic_msgs
 import roboclaw_driver as roboclaw
 from std_msgs.msg import Int16,Float32 
 import rospy
+import threading
+
 
 
 # QPPS is the speed of the encoder when the motor is at 100% power
@@ -23,59 +26,70 @@ import rospy
 
 address = 0x80
 
-MINHEIGHT = 690 #mm
-MAXHEIGHT = 1076 #mm
-
-MAXSPEEDTICKS = 1500 #ticks
-MAXTICKS = 14558 #ticks
-
-TICKSPERMM = MAXTICKS/(MAXHEIGHT-MINHEIGHT) #ticks for 1 mm
-MAXSPEED_M_S = (MAXSPEEDTICKS/TICKSPERMM)*0.001 # m.s-1
-
-ACCELTICKS = 800 #ticks
-DECELTICKS = 800 #ticks
-
-
 pub = rospy.Publisher('winch_Height', Float32, queue_size=50)
 
-def displayspeed():
-    enc = roboclaw.ReadEncM1(address)
-    speed = roboclaw.ReadSpeedM1(address)
-
-    if(enc[0]==1):
-        rospy.logdebug("Encoder: %d",enc[1])
-    else:
-        rospy.logerr("encoder failed")
-
-    if(speed[0]):
-        rospy.logdebug("speed mm/s: %f ",round((speed[1]*9.705)/MAXSPEEDTICKS,2))
-        rospy.logdebug ("speed: %d",speed[1])
-    else:
-        rospy.logerr("speed failed")
 
 
 def calculateHeight():
-    heihtTicks = roboclaw.ReadEncM1(address)[1]
-    height = round(MINHEIGHT + heihtTicks/TICKSPERMM,2)
+    heightTicks = roboclaw.ReadEncM1(address)[1]
+    height = wch.MINHEIGHT + heightTicks/wch.TICKSPERMM
     return(height, heightTicks)
 
+def publisher_thread():
+    rate=rospy.Rate(100)
+    while not rospy.is_shutdown():
+        global height
+        heightTicks = roboclaw.ReadEncM1(address)[1]
+        height = wch.MINHEIGHT + heightTicks/wch.TICKSPERMM
+        pub.publish(heightTicks)
+        rate.sleep()
+
+
+
+
 def controllerInput(data):
-    desiredSpeedInMS = data.data #speed input from remote controller 
-    desiredSpeedInTicks = data.data*1000*TICKSPERMM
-    rospy.loginfo("Desired Speed m.s: %f",speedMS)
+    desiredSpeedInMS = data.data #speed input from remote controller m.s-1
+    desiredSpeedInTicks = data.data*1000*wch.TICKSPERMM # speed in ticks/sec
+    rospy.loginfo("Speed m.s: %f  Speed in ticks : %f  ",desiredSpeedInMS, desiredSpeedInTicks)
 
     realSpeed = roboclaw.ReadSpeedM1(address)
-    realSpeedInMS = int((realSpeed[1]*MAXSPEED_M_S)/MAXSPEEDTICKS,2)
+    realSpeedInMS = (realSpeed[1]*wch.MAXSPEED_M_S)/wch.MAXSPEEDTICKS
+    rospy.loginfo("real  m.s: %f  real ticks     : %f  ",realSpeedInMS, realSpeed[1])
 
-    height = calculateHeight()[1]
+    heightData = calculateHeight()
+    height = heightData[1] #in ticks
+    
+    #rospy.loginfo(" ")
+    rospy.loginfo("height %f:",height)
 
-    if (desiredSpeedInMS < -MAXSPEEDTICKS or desiredSpeedInMS > MAXSPEEDTICKS):
+    if (desiredSpeedInTicks < -wch.MAXSPEEDTICKS or desiredSpeedInTicks > wch.MAXSPEEDTICKS):
         rospy.logerr("Speed out of range")
-    if (height < 0 or height > MAXTICKS):
-        rospy.logerr("Position out of range, shutdown motor")
         roboclaw.SpeedAccelM1(address,1500,0)
+
+
+   
+
+    if (height < 800):
+        roboclaw.SpeedAccelM1(address,1500,int(desiredSpeedInTicks*0.1))
+
+    elif (height < 0):    
+        roboclaw.SpeedAccelM1(address,1500, 500)
+
+    # if (height > wch.MAXTICKS-600):
+    #     roboclaw.SpeedAccelM1(address,1500,int(desiredSpeedInTicks*0.08))
+
+    # if (height > wch.MAXTICKS):
+    #     roboclaw.SpeedAccelM1(address,1500,500)
+   
     else: 
-        roboclaw.SpeedAccelM1(address,800,desiredSpeedInMS)
+        roboclaw.SpeedAccelM1(address,1500,int(desiredSpeedInTicks))
+        #roboclaw.SpeedM1(address,800)
+        #roboclaw.SpeedM1(address,1500)
+    pub.publish(heightData[0])
+     
+        
+
+    
 
 
 
@@ -86,16 +100,16 @@ def callback(data):
     height = data.data  #value received from subscriber
     rospy.loginfo("height : %d",height)
 
-    if (height < MINHEIGHT or  height > MAXHEIGHT):
+    if (height < wch.MINHEIGHT or  height > wch.MAXHEIGHT):
         rospy.logerr("Wrong distance")
         
     else:
-        height-= MINHEIGHT
-        goal = int(TICKSPERMM*height)
+        height-= wch.MINHEIGHT
+        goal = int(wch.TICKSPERMM*height)
         enc = roboclaw.ReadEncM1(address)[1]
         rospy.logdebug("Position goal: %d  Actual Pos: %d",goal,enc)
         
-        roboclaw.SpeedAccelDeccelPositionM1(address,ACCELTICKS,MAXSPEEDTICKS,DECELTICKS,goal,0)
+        roboclaw.SpeedAccelDeccelPositionM1(address,wch.ACCELTICKS,wch.MAXSPEEDTICKS,wch.DECELTICKS,goal,0)
 
         while(roboclaw.ReadEncM1(address)[1]!= goal):
             statut = roboclaw.ReadError(address)[1]
@@ -109,13 +123,10 @@ def callback(data):
                 roboclaw.SetEncM1(address,maxTicks)
                 roboclaw.SpeedAccelM1(address,1500,0)
             pub.publish(calculateHeight()[0])
-            #displayspeed()
-        #calculateHeight()
         enc = roboclaw.ReadEncM1(address)[1]
         rospy.logdebug("Position goal: %d  Actual Pos: %d",goal,enc)
         rospy.loginfo("End")
 
-   #pub.publish(calculateHeight())
 
 
 def shutdown():
@@ -135,7 +146,8 @@ def start():
     # starts the node
     rospy.init_node("winch_node",log_level=rospy.DEBUG)
     
-    rospy.Subscriber("cmd_winch", Float32, callback)
+    rospy.Subscriber("cmd_winch", Float32, callback,queue_size=1)
+    rospy.Subscriber("cmd_vel_Winch",Float32, controllerInput, queue_size=1)
 
     rospy.on_shutdown(shutdown)
     rospy.loginfo("Connecting to roboclaw")
@@ -164,7 +176,7 @@ def start():
 
 
     roboclaw.SpeedAccelM1(address,1500, 0)
-    #roboclaw.ResetEncoders(address)
+    roboclaw.ResetEncoders(address)
 
     rospy.logdebug("dev %s", dev_name)
     rospy.logdebug("baud %d", baud_rate)
@@ -174,7 +186,12 @@ def start():
     
 
 if __name__ == '__main__':
-   
+    
     start()
+    #worker = threading.Thread(target=publisher_thread)
+    #worker.start()
+    
     rospy.spin()
+
+    
     
