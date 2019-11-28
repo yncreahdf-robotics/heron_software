@@ -154,6 +154,7 @@ class Driver
 			diff.Fr = tmp_encs.Fr - encs.Fr;
 			diff.Bl = tmp_encs.Bl - encs.Bl;
 			diff.Br = tmp_encs.Br - encs.Br;
+			ROS_INFO("Encoders Fl%d Fr%d Bl%d Br%d", diff.Fl, diff.Fr, diff.Bl, diff.Br);
 
 			// if datas are plosible (no jump)
 			if(diff.Fl < MAX_DELTA_ENCODERS

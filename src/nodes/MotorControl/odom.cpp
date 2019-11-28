@@ -86,6 +86,7 @@ public:
         if(speed.vx > MAX_SPEED+0.1 || speed.vy > MAX_SPEED+0.1)
         {
             ROS_INFO("Speed Jump detected");
+            ROS_INFO("Speeds vx%f vy%f vth%f", speed.vx, speed.vy, speed.vth);
         }
 
         // debug
@@ -105,6 +106,7 @@ public:
         else
         {
             ROS_INFO("Pose Jump detected");
+            ROS_INFO("Poses dx%f dy%f dth%f", delta_poses.x, delta_poses.y, delta_poses.th);
         }
         
 
