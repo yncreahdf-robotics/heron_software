@@ -53,10 +53,7 @@ class Driver
 
 		struct WheelsEncoders
 		{
-			int Fl;
-			int Fr;
-			int Bl;
-			int Br;
+			int Fl, Fr, Bl, Br;
 		};
 
 		// tmp variable to stoge encoders data
