@@ -63,6 +63,8 @@ class Driver
 		WheelsEncoders encs;
 		WheelsEncoders tmp_encs;
 
+		const int max = (MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT / ODOM_RATE;
+
 	public:
 		Driver()
 		{	
@@ -127,8 +129,6 @@ class Driver
 
 		void pubEncoders()
 		{
-
-			const int max = (MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT / ODOM_RATE;
 
 			//Get values of encoders and calculate difference since the last time the function was called		
 			frontDriver.GetValue(_ABCNTR, 2, encs.Fl);

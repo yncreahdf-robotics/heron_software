@@ -27,28 +27,31 @@ private:
     tf::TransformBroadcaster odom_broadcaster;
 
     ros::Time current_time, last_time;
+    struct WheelsEncoders
+    {
+        int Fl, Fr, Bl, Br;
+    };
 
-    double x;
-    double y;
-    double th;
+    struct Pose
+    {
+        double x, y, th;
+        double dt;
+    };
 
-    double vx;
-    double vy;
-    double vth;
+    struct Speed
+    {
+        double vx, vy, vth;
+    };
 
-    double dt;
-    double delta_x;
-    double delta_y;
-    double delta_th;
+    WheelsEncoders diff_encs;
 
-    double r_frontLeft;
-    double r_frontRight;
-    double r_backLeft;
-    double r_backRight;
+    Pose pose;
+    Pose tmp_pose;
+    Pose delta_poses;
 
-    double tmp_vx;
-    double tmp_vy;
-    double tmp_vth;
+    Speed speed;
+
+    const int max = ((MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * 2 * M_PI * WHEEL_RADIUS) / ODOM_RATE;
 
 
 public:
@@ -57,10 +60,11 @@ public:
         cout << "Initialize Odom" << endl;
         sub = n.subscribe("sensor_encs", 10, &ProcessOdom::callback, this);
         odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
-        // set origin at 0;0;0
-        x = 0;
-        y = 0;
-        th = 0;
+
+        // init map at 0;0;0
+        pose.x = 0;
+        pose.y = 0;
+        pose.th = 0;
     }
     ~ProcessOdom() {}
 
@@ -68,46 +72,50 @@ public:
     void callback(const heron::Encoders& data)
     {
         current_time = ros::Time::now();
-        dt = (current_time - last_time).toSec();
+        delta_poses.dt = (current_time - last_time).toSec();
 
         // calculate the rotation made by each wheel
-        r_frontLeft = -(data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;      // tr/s
-        r_frontRight = -(data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
-        r_backLeft = -(data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
-        r_backRight = -(data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
+        diff_encs.Fl = -(data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / delta_poses.dt;      // tr/s
+        diff_encs.Fr = -(data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / delta_poses.dt;
+        diff_encs.Bl = -(data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / delta_poses.dt;
+        diff_encs.Br = -(data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / delta_poses.dt;
 
-        vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
-        vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
-        vth = - 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
+        speed.vx = (2*M_PI*WHEEL_RADIUS) * (diff_encs.Fl + diff_encs.Fr + diff_encs.Bl + diff_encs.Br)/4;        // m/s
+        speed.vy = (2*M_PI*WHEEL_RADIUS) * (- diff_encs.Fl + diff_encs.Fr - diff_encs.Bl + diff_encs.Br)/4;      // m/s
+        speed.vth = - 2*M_PI*WHEEL_RADIUS * (+ diff_encs.Fl - diff_encs.Fr - diff_encs.Bl + diff_encs.Br) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
 
-        if(vx > MAX_SPEED || vy > MAX_SPEED)
+        if(speed.vx > MAX_SPEED || speed.vy > MAX_SPEED)
         {
-            vx = tmp_vx;
-            vy = tmp_vy;
-            vth = tmp_vth;
             ROS_INFO("Speed Jump detected");
-        }
-        else
-        { 
-            tmp_vx = vx;
-            tmp_vy = vy;
-            tmp_vth = vth;
         }
 
         // debug
         // cout << endl << "odom vel : " << endl << "Vx: " << vx << " Vy: " << vy << " Vth: " << vth << endl;
 
-        delta_x = (vx * cos(th) - vy * sin(th)) * dt;
-        delta_y = (vx * sin(th) + vy * cos(th)) * dt;
-        delta_th = vth * dt;
+        delta_poses.x = (speed.vx * cos(pose.th) - speed.vy * sin(pose.th)) * delta_poses.dt;
+        delta_poses.y = (speed.vx * sin(pose.th) + speed.vy * cos(pose.th)) * delta_poses.dt;
+        delta_poses.th = speed.vth * delta_poses.dt;
 
-        x += delta_x;
-        y += delta_y;
-        th += delta_th;
+        if(pose.x < max && pose.y < max)
+        {
+            pose.x += delta_poses.x;
+            pose.y += delta_poses.y;
+            pose.th += delta_poses.th;
+        }
+        else
+        {
+            pose.x = tmp_pose.x;
+            pose.y = tmp_pose.y;
+            pose.th = tmp_pose.th;
+        }
+        
+
+        // save data
+        tmp_pose = pose;
         
 
         //since all odometry is 6DOF we'll need a quaternion created from yaw
-        geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
+        geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(pose.th);
 
         //first, we'll publish the transform over tf
         geometry_msgs::TransformStamped odom_trans;
@@ -115,8 +123,8 @@ public:
         odom_trans.header.frame_id = "odom";
         odom_trans.child_frame_id = "base_link";
 
-        odom_trans.transform.translation.x = x;
-        odom_trans.transform.translation.y = y;
+        odom_trans.transform.translation.x = pose.x;
+        odom_trans.transform.translation.y = pose.y;
         odom_trans.transform.translation.z = 0.0;
         odom_trans.transform.rotation = odom_quat;
 
@@ -129,16 +137,16 @@ public:
         odom.header.frame_id = "odom";
 
         //set the position
-        odom.pose.pose.position.x = x;
-        odom.pose.pose.position.y = y;
+        odom.pose.pose.position.x = pose.x;
+        odom.pose.pose.position.y = pose.y;
         odom.pose.pose.position.z = 0.0;
         odom.pose.pose.orientation = odom_quat;
 
         //set the velocity
         odom.child_frame_id = "base_link";
-        odom.twist.twist.linear.x = vx;
-        odom.twist.twist.linear.y = vy;
-        odom.twist.twist.angular.z = vth;
+        odom.twist.twist.linear.x = speed.vx;
+        odom.twist.twist.linear.y = speed.vy;
+        odom.twist.twist.angular.z = speed.vth;
 
         odom.pose.covariance[0] = 0.01;
         odom.pose.covariance[7] = 0.01;
