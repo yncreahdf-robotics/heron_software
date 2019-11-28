@@ -36,7 +36,7 @@ class Driver
 		RoboteqDevice backDriver;
 
 		// custom msg
-		heron::Encoders diff_encs;
+		heron::Encoders encs_msg;
 
 		double saturate(double value, double sat)
 		{
@@ -57,21 +57,11 @@ class Driver
 			int Fr;
 			int Bl;
 			int Br;
-
-			int tmp_Fl;
-			int tmp_Fr;
-			int tmp_Bl;
-			int tmp_Br;
 		};
 
 		// tmp variable to stoge encoders data
-		WheelsEncoders wencs;
-
-		int tmp_diff_Fl;
-		int tmp_diff_Fr;
-		int tmp_diff_Bl;
-		int tmp_diff_Br;
-
+		WheelsEncoders encs;
+		WheelsEncoders tmp_encs;
 
 	public:
 		Driver()
@@ -80,11 +70,6 @@ class Driver
 			//Subscribe to cmd_vel topic and call the setCommands function 
 			sub = n.subscribe("cmd_vel", 1, &Driver::setCommands, this);
 			encoders_pub = n.advertise<heron::Encoders>("sensor_encs", 10);
-
-			wencs.tmp_Fl = 0;
-			wencs.tmp_Fr = 0;
-			wencs.tmp_Bl = 0;
-			wencs.tmp_Br = 0;
 		}
 		~Driver() {}
 
@@ -133,10 +118,10 @@ class Driver
 
 		void initEncoders()
 		{
-			frontDriver.GetValue(_ABCNTR, 2, wencs.tmp_Fl);
-			frontDriver.GetValue(_ABCNTR, 1, wencs.tmp_Fr);
-			backDriver.GetValue(_ABCNTR, 2, wencs.tmp_Bl);
-			backDriver.GetValue(_ABCNTR, 1, wencs.tmp_Br);
+			frontDriver.GetValue(_ABCNTR, 2, tmp_encs.Fl);
+			frontDriver.GetValue(_ABCNTR, 1, tmp_encs.Fr);
+			backDriver.GetValue(_ABCNTR, 2, tmp_encs.Bl);
+			backDriver.GetValue(_ABCNTR, 1, tmp_encs.Br);
 		}
 
 
@@ -146,41 +131,32 @@ class Driver
 			const int max = (MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT / ODOM_RATE;
 
 			//Get values of encoders and calculate difference since the last time the function was called		
-			frontDriver.GetValue(_ABCNTR, 2, wencs.Fl);
-			frontDriver.GetValue(_ABCNTR, 1, wencs.Fr);
-			backDriver.GetValue(_ABCNTR, 2, wencs.Bl);
-			backDriver.GetValue(_ABCNTR, 1, wencs.Br);
+			frontDriver.GetValue(_ABCNTR, 2, encs.Fl);
+			frontDriver.GetValue(_ABCNTR, 1, encs.Fr);
+			backDriver.GetValue(_ABCNTR, 2, encs.Bl);
+			backDriver.GetValue(_ABCNTR, 1, encs.Br);
 
-			diff_encs.EncFl = wencs.tmp_Fl - wencs.Fl;
-			diff_encs.EncFr = wencs.tmp_Fr - wencs.Fr;
-			diff_encs.EncBl = wencs.tmp_Bl - wencs.Bl;
-			diff_encs.EncBr = wencs.tmp_Br - wencs.Br;
+			encs_msg.EncFl = tmp_encs.Fl - encs.Fl;
+			encs_msg.EncFr = tmp_encs.Fr - encs.Fr;
+			encs_msg.EncBl = tmp_encs.Bl - encs.Bl;
+			encs_msg.EncBr = tmp_encs.Br - encs.Br;
 
-			if(diff_encs.EncFl < max
-			&& diff_encs.EncFr < max
-			&& diff_encs.EncBl < max
-			&& diff_encs.EncBr < max)
+			if(encs_msg.EncFl < max
+			&& encs_msg.EncFr < max
+			&& encs_msg.EncBl < max
+			&& encs_msg.EncBr < max)
 			{
-				wencs.tmp_Fl = wencs.Fl;
-				wencs.tmp_Fr = wencs.Fr;
-				wencs.tmp_Bl = wencs.Bl;
-				wencs.tmp_Br = wencs.Br;
-
-				tmp_diff_Fl = diff_encs.EncFl;
-				tmp_diff_Fr = diff_encs.EncFr;
-				tmp_diff_Bl = diff_encs.EncBl;
-				tmp_diff_Br = diff_encs.EncBr;
+				tmp_encs.Fl = encs.Fl;
+				tmp_encs.Fr = encs.Fr;
+				tmp_encs.Bl = encs.Bl;
+				tmp_encs.Br = encs.Br;
 			}
 			else
 			{
 				ROS_INFO("Encoders Jump detected");
-				diff_encs.EncFl = tmp_diff_Fl;
-				diff_encs.EncFr = tmp_diff_Fr;
-				diff_encs.EncBl = tmp_diff_Bl;
-				diff_encs.EncBr = tmp_diff_Br;
 			}
 			
-			encoders_pub.publish(diff_encs);
+			encoders_pub.publish(encs_msg);
 		}
 
 		/*
