@@ -198,6 +198,8 @@ class Driver
 				{
 					tmp_encs.Br = encs.Br;
 				}
+
+				ROS_INFO("NEW Encoders Fl%d Fr%d Bl%d Br%d", diff.Fl, diff.Fr, diff.Bl, diff.Br);
 			}
 			
 			// Publish the datas
