@@ -38,6 +38,7 @@ class Driver
 		// custom msg
 		heron::Encoders encs_msg;
 
+		/* saturate motor command */
 		double saturate(double value, double sat)
 		{
 			if(value > sat)

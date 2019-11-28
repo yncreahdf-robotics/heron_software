@@ -51,7 +51,7 @@ private:
 
     Speed speed;
 
-    const int max = ((MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * 2 * M_PI * WHEEL_RADIUS) / ODOM_RATE;
+    const int max_delta_pose = ((MOTOR_OUTPUT_SHAFT_MAX_RPM / 60) * 2 * M_PI * WHEEL_RADIUS) / ODOM_RATE;
 
 
 public:
@@ -96,7 +96,7 @@ public:
         delta_poses.y = (speed.vx * sin(pose.th) + speed.vy * cos(pose.th)) * delta_poses.dt;
         delta_poses.th = speed.vth * delta_poses.dt;
 
-        if(pose.x < max && pose.y < max)
+        if(delta_poses.x < max_delta_pose && delta_poses.y < max_delta_pose)
         {
             pose.x += delta_poses.x;
             pose.y += delta_poses.y;
