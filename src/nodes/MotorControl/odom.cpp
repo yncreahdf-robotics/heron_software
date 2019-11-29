@@ -146,12 +146,12 @@ public:
         odom.twist.twist.linear.y = speed.vy;
         odom.twist.twist.angular.z = speed.vth;
 
-        // odom.pose.covariance[0] = 0.01;
-        // odom.pose.covariance[7] = 0.01;
-        // odom.pose.covariance[14] = 0.01;
-        // odom.pose.covariance[21] = 0.1;
-        // odom.pose.covariance[28] = 0.1;
-        // odom.pose.covariance[35] = 0.1;
+        odom.pose.covariance[0] = 0.01;
+        odom.pose.covariance[7] = 0.01;
+        odom.pose.covariance[14] = 0.01;
+        odom.pose.covariance[21] = 0.1;
+        odom.pose.covariance[28] = 0.1;
+        odom.pose.covariance[35] = 0.1;
 
 
         //publish the message
