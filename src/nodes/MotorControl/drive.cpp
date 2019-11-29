@@ -159,14 +159,10 @@ class Driver
 			//ROS_INFO("Encoders Fl%d Fr%d Bl%d Br%d", diff.Fl, diff.Fr, diff.Bl, diff.Br);
 
 			// if datas are plosible (no jump)
-			if(diff.Fl < THRESHOLD_DELTA_ENCODERS
-			&& diff.Fr < THRESHOLD_DELTA_ENCODERS
-			&& diff.Bl < THRESHOLD_DELTA_ENCODERS
-			&& diff.Br < THRESHOLD_DELTA_ENCODERS
-			&& diff.Fl > - THRESHOLD_DELTA_ENCODERS
-			&& diff.Fr > - THRESHOLD_DELTA_ENCODERS
-			&& diff.Bl > - THRESHOLD_DELTA_ENCODERS
-			&& diff.Br > - THRESHOLD_DELTA_ENCODERS)
+			if(abs(diff.Fl) < THRESHOLD_DELTA_ENCODERS
+			&& abs(diff.Fr) < THRESHOLD_DELTA_ENCODERS
+			&& abs(diff.Bl) < THRESHOLD_DELTA_ENCODERS
+			&& abs(diff.Br) < THRESHOLD_DELTA_ENCODERS)
 			{
 				// Update the values to send to odom
 				encs_msg.EncFl = diff.Fl;
