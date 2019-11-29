@@ -14,7 +14,7 @@
 #define ODOM_PERIOD 0.01 // s
 
 #define MAX_SPEED 0.44 // m/s
-#define TOLERANCE_SPEED 0.15
+#define TOLERANCE_SPEED 0.3
 
 #define THRESHOLD_DELTA_ENCODERS 100 
 #define MAX_DELTA_POSE 0.01

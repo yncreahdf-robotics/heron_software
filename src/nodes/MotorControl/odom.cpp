@@ -31,7 +31,7 @@ private:
 
     struct WheelsEncoders
     {
-        int Fl, Fr, Bl, Br;
+        double Fl, Fr, Bl, Br;
     };
 
     struct Pose
@@ -84,32 +84,31 @@ public:
         speed.vy = (2*M_PI*WHEEL_RADIUS) * (- diff_encs.Fl + diff_encs.Fr - diff_encs.Bl + diff_encs.Br)/4;      // m/s
         speed.vth = - 2*M_PI*WHEEL_RADIUS * (+ diff_encs.Fl - diff_encs.Fr - diff_encs.Bl + diff_encs.Br) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
 
-        if(abs(speed.vx) > MAX_SPEED + TOLERANCE_SPEED 
-        || abs(speed.vy) > MAX_SPEED + TOLERANCE_SPEED)
+        if(abs(speed.vx) > (MAX_SPEED + TOLERANCE_SPEED) 
+        || abs(speed.vy) > (MAX_SPEED + TOLERANCE_SPEED))
         {
             ROS_INFO("Speed Jump detected");
             ROS_INFO("Speeds vx%f vy%f vth%f", speed.vx, speed.vy, speed.vth);
         }
-
-        // debug
-        // cout << endl << "odom vel : " << endl << "Vx: " << vx << " Vy: " << vy << " Vth: " << vth << endl;
-
-        delta_poses.x = (speed.vx * cos(pose.th) - speed.vy * sin(pose.th)) * delta_poses.dt;
-        delta_poses.y = (speed.vx * sin(pose.th) + speed.vy * cos(pose.th)) * delta_poses.dt;
-        delta_poses.th = speed.vth * delta_poses.dt;
+        else
+        {
+            delta_poses.x = (speed.vx * cos(pose.th) - speed.vy * sin(pose.th)) * delta_poses.dt;
+            delta_poses.y = (speed.vx * sin(pose.th) + speed.vy * cos(pose.th)) * delta_poses.dt;
+            delta_poses.th = speed.vth * delta_poses.dt; 
+        }
 
         // If delta poses are plosible, then update the pose, otherwise don't, it will publish previous ones
-        if(abs(delta_poses.x) < MAX_DELTA_POSE 
-        && abs(delta_poses.y) < MAX_DELTA_POSE)
+        if(abs(delta_poses.x) > MAX_DELTA_POSE 
+        && abs(delta_poses.y) > MAX_DELTA_POSE)
+        {
+            ROS_INFO("Pose Jump detected");
+            ROS_INFO("Poses dx%f dy%f dth%f", delta_poses.x, delta_poses.y, delta_poses.th);
+        }
+        else
         {
             pose.x += delta_poses.x;
             pose.y += delta_poses.y;
             pose.th += delta_poses.th;
-        }
-        else
-        {
-            ROS_INFO("Pose Jump detected");
-            ROS_INFO("Poses dx%f dy%f dth%f", delta_poses.x, delta_poses.y, delta_poses.th);
         }
         
 
@@ -147,12 +146,12 @@ public:
         odom.twist.twist.linear.y = speed.vy;
         odom.twist.twist.angular.z = speed.vth;
 
-        odom.pose.covariance[0] = 0.01;
-        odom.pose.covariance[7] = 0.01;
-        odom.pose.covariance[14] = 0.01;
-        odom.pose.covariance[21] = 0.1;
-        odom.pose.covariance[28] = 0.1;
-        odom.pose.covariance[35] = 0.1;
+        // odom.pose.covariance[0] = 0.01;
+        // odom.pose.covariance[7] = 0.01;
+        // odom.pose.covariance[14] = 0.01;
+        // odom.pose.covariance[21] = 0.1;
+        // odom.pose.covariance[28] = 0.1;
+        // odom.pose.covariance[35] = 0.1;
 
 
         //publish the message

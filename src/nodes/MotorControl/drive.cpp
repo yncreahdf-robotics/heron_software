@@ -184,19 +184,19 @@ class Driver
 				ROS_INFO("Encoders Jump detected");
 
 				// catch up the value error on the failing encoder(s)
-				if(encs.Fl > THRESHOLD_DELTA_ENCODERS || encs.Fl < - THRESHOLD_DELTA_ENCODERS)
+				if(abs(encs.Fl) > THRESHOLD_DELTA_ENCODERS)
 				{
 					tmp_encs.Fl = encs.Fl;
 				}
-				if(encs.Fr > THRESHOLD_DELTA_ENCODERS || encs.Fr < - THRESHOLD_DELTA_ENCODERS)
+				if(abs(encs.Fr) > THRESHOLD_DELTA_ENCODERS)
 				{
 					tmp_encs.Fr = encs.Fr;
 				}
-				if(encs.Bl > THRESHOLD_DELTA_ENCODERS || encs.Bl < - THRESHOLD_DELTA_ENCODERS)
+				if(abs(encs.Bl) > THRESHOLD_DELTA_ENCODERS)
 				{
 					tmp_encs.Bl = encs.Bl;
 				}
-				if(encs.Br > THRESHOLD_DELTA_ENCODERS || encs.Br < - THRESHOLD_DELTA_ENCODERS)
+				if(abs(encs.Br) > THRESHOLD_DELTA_ENCODERS)
 				{
 					tmp_encs.Br = encs.Br;
 				}
