@@ -2,8 +2,15 @@
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
-
+from std_msgs.msg import Float32 
 from math import pi, atan2, sqrt
+
+import sys  
+# #sys.path.append("/heron_software/src/nodes/winch") 
+sys.path.append("/home/jiji/catkin_ws/src/heron_software/src/nodes/winch") 
+import winch_specs
+
+
 
 
 # This ROS Node converts Joystick inputs from the joy node
@@ -15,19 +22,30 @@ from math import pi, atan2, sqrt
 # axis 0 aka left stick horizonal controls linear speed
 # axis 3 aka right stick horizonal controls angular speed
 # Warning on Xbox controller y axis is reversed !
+
+counter = 0
+
 def callback(data):
     twist = Twist()
     twist.linear.x = data.axes[1] * 0.40 #robot linear speed
     twist.linear.y = - data.axes[0] * 0.40
+    
+    cmd_winch = Float32()
+    global counter
 
-    # if(data.axes[3] == 0 and data.axes[4] == 0):
-    #     twist.angular.z = 0
-    # else:
-    #     twist.angular.z = (atan2(-data.axes[3], -data.axes[4]) + pi) # 3;4
+   # you need to press both LT and RT from Xbox controller to initialize
+    if(counter == 0):
+        if ((data.axes[2] == 0) and (data.axes[5]== 0)):
+           
+            counter=0
+        elif ((data.axes[2] == -1) and (data.axes[5]== -1)) : 
+            counter+=1
+    else:
+        cmd_winch.data = ((data.axes[2] - data.axes[5])*(winch_specs.MAXSPEED_M_S/2) )
 
-    twist.angular.z = -data.axes[3] * pi/2
-
-
+   
+    twist.angular.z = -data.axes[3] * (pi/2)
+    
     if(data.axes[7] < 0):
         twist.linear.x = 0.44
     if(data.axes[7] > 0):
@@ -36,21 +54,24 @@ def callback(data):
         twist.linear.y = 0.44
     if(data.axes[6] > 0):
         twist.linear.y = -0.44
-    
+
     # if(data.axes[2] > 0 or data.axes[5] > 0):
     #     twist.linear.x = 0
     #     twist.linear.y = 0
     #     twist.angular.x = 0
     
-    print('x: ', twist.linear.x, ' y: ', twist.linear.y, ' a: ', twist.angular.z * 360 / (2*pi))
+    #print('x: ', twist.linear.x, ' y: ', twist.linear.y, ' a: ', twist.angular.z * 360 / (2*pi))
     pub.publish(twist)
+    pubWinch.publish(cmd_winch)
 
 
 # Intializes everything
 def start():
     # publishing to "Heron/cmd_vel" to control Heron
     global pub
+    global pubWinch
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+    pubWinch = rospy.Publisher('cmd_vel_Winch',Float32, queue_size = 1)
 
     # subscribed to joystick inputs on topic "joy"
     rospy.Subscriber("joy", Joy, callback)
