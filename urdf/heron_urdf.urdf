@@ -98,6 +98,7 @@
       xyz="0 1 0" />
     <safety_controller
       k_velocity="0" />
+    <limit effort="9.1201845" velocity="8.79645942"/>
   </joint>
   <link
     name="wheel_FR">
@@ -153,6 +154,7 @@
       xyz="0 1 0" />
     <safety_controller
       k_velocity="0" />
+    <limit effort="9.1201845" velocity="8.79645942"/>
   </joint>
   <link
     name="wheel_BL">
@@ -208,6 +210,7 @@
       xyz="0 1 0" />
     <safety_controller
       k_velocity="0" />
+    <limit effort="9.1201845" velocity="8.79645942"/>
   </joint>
   <link
     name="wheel_BR">
@@ -263,6 +266,7 @@
       xyz="0 1 0" />
     <safety_controller
       k_velocity="0" />
+    <limit effort="9.1201845" velocity="8.79645942"/>
   </joint>
   <link
     name="support">
