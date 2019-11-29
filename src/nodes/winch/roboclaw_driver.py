@@ -1106,8 +1106,11 @@ def ReadTemp2(address):
     return _read2(address, Cmd.GETTEMP2)
 
 
+# def ReadError(address):
+#     return _read2(address, Cmd.GETERROR)
+
 def ReadError(address):
-    return _read2(address, Cmd.GETERROR)
+    return _read4(address, Cmd.GETERROR)
 
 
 def ReadEncoderModes(address):

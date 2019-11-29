@@ -6,8 +6,11 @@ from std_msgs.msg import Float32
 from math import pi, atan2, sqrt
 
 import sys  
+# #sys.path.append("/heron_software/src/nodes/winch") 
 sys.path.append("/home/jiji/catkin_ws/src/heron_software/src/nodes/winch") 
 import winch_specs
+
+
 
 
 # This ROS Node converts Joystick inputs from the joy node
@@ -57,7 +60,7 @@ def callback(data):
     #     twist.linear.y = 0
     #     twist.angular.x = 0
     
-    print('x: ', twist.linear.x, ' y: ', twist.linear.y, ' a: ', twist.angular.z * 360 / (2*pi))
+    #print('x: ', twist.linear.x, ' y: ', twist.linear.y, ' a: ', twist.angular.z * 360 / (2*pi))
     pub.publish(twist)
     pubWinch.publish(cmd_winch)
 

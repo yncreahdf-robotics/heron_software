@@ -7,7 +7,7 @@ import diagnostic_msgs
 import roboclaw_driver as roboclaw
 from std_msgs.msg import Int16,Float32 
 import rospy
-import threading
+
 
 
 
@@ -29,22 +29,11 @@ address = 0x80
 pub = rospy.Publisher('winch_Height', Float32, queue_size=50)
 
 
-
+flag=0
 def calculateHeight():
     heightTicks = roboclaw.ReadEncM1(address)[1]
     height = wch.MINHEIGHT + heightTicks/wch.TICKSPERMM
     return(height, heightTicks)
-
-def publisher_thread():
-    rate=rospy.Rate(100)
-    while not rospy.is_shutdown():
-        global height
-        heightTicks = roboclaw.ReadEncM1(address)[1]
-        height = wch.MINHEIGHT + heightTicks/wch.TICKSPERMM
-        pub.publish(heightTicks)
-        rate.sleep()
-
-
 
 
 def controllerInput(data):
@@ -59,32 +48,46 @@ def controllerInput(data):
     heightData = calculateHeight()
     height = heightData[1] #in ticks
     
-    #rospy.loginfo(" ")
     rospy.loginfo("height %f:",height)
+
+    global flag
+
+    statut=hex(roboclaw.ReadError(address)[1])
+    print(statut)
+    statut=roboclaw.ReadError(address)[1]
+    print(statut)
+    
+    
+    if  (statut == 8388608) :  #0x40
+        rospy.logdebug("M1 Home reached")
+    elif (statut == 8388608):  #0x80
+        rospy.logdebug("M1 Home reached  pos ")
+        #roboclaw.SetEncM1(address,maxTicks)
 
     if (desiredSpeedInTicks < -wch.MAXSPEEDTICKS or desiredSpeedInTicks > wch.MAXSPEEDTICKS):
         rospy.logerr("Speed out of range")
-        roboclaw.SpeedAccelM1(address,1500,0)
+        roboclaw.SpeedAccelM1(address,80000,0)
 
+    #negatif gauche positif droit
 
-   
+    if (height < 100):  
+        if(desiredSpeedInTicks < 0):
+            roboclaw.SpeedAccelM1(address,80000,0)
+        else:
+            roboclaw.SpeedAccelM1(address,wch.ACCELTICKS,int(desiredSpeedInTicks))
+        
+    
 
-    if (height < 800):
-        roboclaw.SpeedAccelM1(address,1500,int(desiredSpeedInTicks*0.1))
-
-    elif (height < 0):    
-        roboclaw.SpeedAccelM1(address,1500, 500)
-
-    # if (height > wch.MAXTICKS-600):
-    #     roboclaw.SpeedAccelM1(address,1500,int(desiredSpeedInTicks*0.08))
-
-    # if (height > wch.MAXTICKS):
-    #     roboclaw.SpeedAccelM1(address,1500,500)
+    elif (height > (wch.MAXTICKS-100)):
+        if(desiredSpeedInTicks > 0):
+            roboclaw.SpeedAccelM1(address,80000,0)
+        else:
+            roboclaw.SpeedAccelM1(address,wch.ACCELTICKS,int(desiredSpeedInTicks))
+        
    
     else: 
-        roboclaw.SpeedAccelM1(address,1500,int(desiredSpeedInTicks))
-        #roboclaw.SpeedM1(address,800)
-        #roboclaw.SpeedM1(address,1500)
+        roboclaw.SpeedAccelM1(address,wch.ACCELTICKS,int(desiredSpeedInTicks))
+
     pub.publish(heightData[0])
      
         
@@ -162,17 +165,7 @@ def start():
         rospy.logdebug(e)
         rospy.signal_shutdown("Could not connect to Roboclaw")
       
-    try:
-        version = roboclaw.ReadVersion(address)
-    except Exception as e:
-        rospy.logwarn("Problem getting roboclaw version")
-        rospy.logdebug(e)
-        pass
-
-    if not version[0]:
-        rospy.logwarn("Could not get version from roboclaw")
-    else:
-        rospy.logdebug(repr(version[1]))
+    
 
 
     roboclaw.SpeedAccelM1(address,1500, 0)
@@ -187,10 +180,7 @@ def start():
 
 if __name__ == '__main__':
     
-    start()
-    #worker = threading.Thread(target=publisher_thread)
-    #worker.start()
-    
+    start()    
     rospy.spin()
 
     
