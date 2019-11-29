@@ -9,7 +9,7 @@
     textfile="$(find heron)/urdf/heron_urdf.urdf" />
   <param
     name="use_gui"
-    value="$(arg gui)" />
+    value="True" />
   <node
     name="joint_state_publisher"
     pkg="joint_state_publisher"
@@ -23,4 +23,4 @@
     pkg="rviz"
     type="rviz"
     args="-d $(find heron)/urdf.rviz" />
-</launch>
+  </launch>
