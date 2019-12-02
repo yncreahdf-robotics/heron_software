@@ -29,7 +29,7 @@ address = 0x80
 pub = rospy.Publisher('winch_Height', Float32, queue_size=50)
 
 
-flag=0
+
 def calculateHeight():
     heightTicks = roboclaw.ReadEncM1(address)[1]
     height = wch.MINHEIGHT + heightTicks/wch.TICKSPERMM
@@ -38,7 +38,7 @@ def calculateHeight():
 
 def controllerInput(data):
     desiredSpeedInMS = data.data #speed input from remote controller m.s-1
-    desiredSpeedInTicks = data.data*1000*wch.TICKSPERMM # speed in ticks/sec
+    desiredSpeedInTicks = data.data*1000*wch.TICKSPERMM # speed from m.s-1 to ticks/sec
     rospy.loginfo("Speed m.s: %f  Speed in ticks : %f  ",desiredSpeedInMS, desiredSpeedInTicks)
 
     realSpeed = roboclaw.ReadSpeedM1(address)
@@ -48,27 +48,19 @@ def controllerInput(data):
     heightData = calculateHeight()
     height = heightData[1] #in ticks
     
-    rospy.loginfo("height %f:",height)
+    #rospy.loginfo("height %f:",height)
 
-    global flag
-
-    statut=hex(roboclaw.ReadError(address)[1])
-    print(statut)
     statut=roboclaw.ReadError(address)[1]
-    print(statut)
     
-    
-    if  (statut == 8388608) :  #0x40
+    if  (statut == 4194304) :  #0x40
         rospy.logdebug("M1 Home reached")
     elif (statut == 8388608):  #0x80
-        rospy.logdebug("M1 Home reached  pos ")
+        rospy.logdebug("M1 Max Pos reached")
         #roboclaw.SetEncM1(address,maxTicks)
 
     if (desiredSpeedInTicks < -wch.MAXSPEEDTICKS or desiredSpeedInTicks > wch.MAXSPEEDTICKS):
         rospy.logerr("Speed out of range")
         roboclaw.SpeedAccelM1(address,80000,0)
-
-    #negatif gauche positif droit
 
     if (height < 100):  
         if(desiredSpeedInTicks < 0):
@@ -76,7 +68,6 @@ def controllerInput(data):
         else:
             roboclaw.SpeedAccelM1(address,wch.ACCELTICKS,int(desiredSpeedInTicks))
         
-    
 
     elif (height > (wch.MAXTICKS-100)):
         if(desiredSpeedInTicks > 0):
@@ -135,11 +126,11 @@ def callback(data):
 def shutdown():
         rospy.loginfo("Shutting down")
         try:
-            roboclaw.SpeedAccelM1(address,1500, 0)
+            roboclaw.SpeedAccelM1(address,80000, 0)
         except OSError:
             rospy.logerr("Shutdown did not work trying again")
             try:
-                roboclaw.SpeedAccelM1(address,1500, 0)
+                roboclaw.SpeedAccelM1(address,80000, 0)
             except OSError as e:
                 rospy.logerr("Could not shutdown motors!!!!")
                 rospy.logdebug(e)
@@ -149,7 +140,7 @@ def start():
     # starts the node
     rospy.init_node("winch_node",log_level=rospy.DEBUG)
     
-    rospy.Subscriber("cmd_winch", Float32, callback,queue_size=1)
+    rospy.Subscriber("cmd_pos_winch", Float32, callback,queue_size=1)
     rospy.Subscriber("cmd_vel_Winch",Float32, controllerInput, queue_size=1)
 
     rospy.on_shutdown(shutdown)
@@ -160,15 +151,14 @@ def start():
 
     try:
         roboclaw.Open(dev_name, baud_rate)
+        return 1
     except Exception as e:
         rospy.logfatal("Could not connect to Roboclaw")
         rospy.logdebug(e)
         rospy.signal_shutdown("Could not connect to Roboclaw")
+        return 0
       
-    
-
-
-    roboclaw.SpeedAccelM1(address,1500, 0)
+    roboclaw.SpeedAccelM1(address,80000, 0)
     roboclaw.ResetEncoders(address)
 
     rospy.logdebug("dev %s", dev_name)
@@ -179,9 +169,12 @@ def start():
     
 
 if __name__ == '__main__':
-    
-    start()    
+    start()
     rospy.spin()
-
+    
+    # if (start()):
+    #     rospy.spin()
+    # else : 
+    #     return 0 #could not connect 
     
     
