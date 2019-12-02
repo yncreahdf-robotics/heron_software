@@ -16,12 +16,8 @@ add_message_files(
   msg
 
   FILES
-  Encoders.msg
-  Battery.msg
   ValueUnitFloat.msg
   ValueUnitInt.msg
-  IRSensors.msg
-  USIRSensors.msg
 )
 
 generate_messages(

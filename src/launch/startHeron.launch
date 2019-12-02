@@ -15,10 +15,6 @@
         
         <node name="odom" pkg="heron" type="odom" output="screen" respawn="true" />
 
-        <node name="battery_sensor" pkg="heron" type="battery.py" >
-            <param name="portUSB" value="/dev/battery"/>
-        </node>
-
     </group>
 
 </launch>
