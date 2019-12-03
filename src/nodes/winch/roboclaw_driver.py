@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+import rospy
 import random
 import serial
 import time
@@ -1182,5 +1184,10 @@ def ReadPWMMode(address):
 
 def Open(comport, rate):
     global port
-    port = serial.Serial(comport, baudrate=rate, timeout=0.1, interCharTimeout=0.01)
-    return
+
+    try:
+        port = serial.Serial(comport, baudrate=rate, timeout=0.1, interCharTimeout=0.01)
+        return 1
+    except :
+        return 0
+    
