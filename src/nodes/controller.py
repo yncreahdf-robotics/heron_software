@@ -4,13 +4,11 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Float32 
 from math import pi, atan2, sqrt
+import os
 
-import sys  
-# #sys.path.append("/heron_software/src/nodes/winch") 
-sys.path.append("/home/jiji/catkin_ws/src/heron_software/src/nodes/winch") 
+import sys   
+sys.path.append(str(os.getcwd()[:-4])+"catkin_ws/src/heron_software/src/nodes/winch") 
 import winch_specs
-
-
 
 
 # This ROS Node converts Joystick inputs from the joy node
@@ -67,18 +65,17 @@ def callback(data):
 
 # Intializes everything
 def start():
+     # starts the node
+    rospy.init_node('controller')
+
     # publishing to "Heron/cmd_vel" to control Heron
     global pub
     global pubWinch
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
-    pubWinch = rospy.Publisher('cmd_vel_Winch',Float32, queue_size = 1)
+    pubWinch = rospy.Publisher('cmd_vel_winch',Float32, queue_size = 1)
 
     # subscribed to joystick inputs on topic "joy"
-    rospy.Subscriber("joy", Joy, callback)
-
-
-    # starts the node
-    rospy.init_node('controller')
+    rospy.Subscriber("joy", Joy, callback)   
     rospy.spin()
 
 if __name__ == '__main__':

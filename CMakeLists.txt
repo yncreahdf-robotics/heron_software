@@ -22,6 +22,7 @@ add_message_files(
   ValueUnitInt.msg
   IRSensors.msg
   USIRSensors.msg
+  winch.msg
 )
 
 generate_messages(
