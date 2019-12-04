@@ -80,8 +80,8 @@ public:
         diff_encs.Bl = -(data.EncBl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / delta_poses.dt;
         diff_encs.Br = -(data.EncBr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / delta_poses.dt;
 
-        speed.vx = MECANUM_X * (2*M_PI*WHEEL_RADIUS) * (diff_encs.Fl + diff_encs.Fr + diff_encs.Bl + diff_encs.Br)/4;        // m/s
-        speed.vy = MECANUM_Y * (2*M_PI*WHEEL_RADIUS) * (- diff_encs.Fl + diff_encs.Fr - diff_encs.Bl + diff_encs.Br)/4;      // m/s
+        speed.vx = (1 / MECANUM_X) * (2*M_PI*WHEEL_RADIUS) * (diff_encs.Fl + diff_encs.Fr + diff_encs.Bl + diff_encs.Br)/4;        // m/s
+        speed.vy = (1 / MECANUM_Y) * (2*M_PI*WHEEL_RADIUS) * (- diff_encs.Fl + diff_encs.Fr - diff_encs.Bl + diff_encs.Br)/4;      // m/s
         speed.vth = - 2*M_PI*WHEEL_RADIUS * (+ diff_encs.Fl - diff_encs.Fr - diff_encs.Bl + diff_encs.Br) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
 
         if(abs(speed.vx) > (MAX_SPEED + TOLERANCE_SPEED) 
