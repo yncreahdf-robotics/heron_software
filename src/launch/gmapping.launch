@@ -1,0 +1,10 @@
+<launch>
+    <group ns="heron01">    
+        <node pkg="gmapping" type="slam_gmapping" name="gmapping_thing" output="screen" >
+            <remap from="scan" to="scan_filtered" />
+            <remap from="base_link" to="base_link" />
+            <remap from="odom" to="odom" />
+        </node>
+    </group>
+  
+</launch>
