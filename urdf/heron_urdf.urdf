@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.0-0-g9aa0fdb  Build Version: 1.5.7004.21443
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="heron_urdf">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.15 0.025 0.0"
+        rpy="0 0 1.57079" />
+      <mass
+        value="25" />
+      <inertia
+        ixx="4.73345232681242"
+        ixy="-6.13913566072873E-06"
+        ixz="-1.89872416704455E-05"
+        iyy="6.95202353462315"
+        iyz="-8.07624704791103E-06"
+        izz="3.18752499734018" /> 
+    </inertial>
+    <visual>
+      <origin
+        xyz="-0.15 0.025 0.0"
+        rpy="0 0 1.57079" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/base_link.STL"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.3 0.3 0.3 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="wheel_FL">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.389968906998643" />
+      <inertia
+        ixx="0.000322138046158454"
+        ixy="-6.65852858947508E-37"
+        ixz="-1.86618052242594E-37"
+        iyy="0.00048299257130799"
+        iyz="5.80382085092595E-22"
+        izz="0.000322138046158454" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/wheel_FL.dae" scale="0.393700787 0.5 0.393700787" />
+      </geometry>
+      <material
+        name="">
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/wheel_FL.dae" scale="0.393700787 0.5 0.393700787"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel_FL"
+    type="continuous">
+    <origin
+      xyz="0.199955093786635 0.186235 -0.0610768464243844"
+      rpy="1.5707963267949 1.5707963267949 -1.5707963267949" />
+    <parent
+      link="base_link" />
+    <child
+      link="wheel_FL" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+    <limit effort="9.1201845" velocity="8.79645942"/>
+  </joint>
+  <link
+    name="wheel_FR">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.389968906998643" />
+      <inertia
+        ixx="0.000322138046158454"
+        ixy="-6.65852858947508E-37"
+        ixz="-1.86618052242594E-37"
+        iyy="0.00048299257130799"
+        iyz="5.80382085092594E-22"
+        izz="0.000322138046158454" />  
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/wheel_FR.dae" scale="0.393700787 0.5 0.393700787"/>
+      </geometry>
+      <material
+        name="">
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/wheel_FR.dae" scale="0.393700787 0.5 0.393700787"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel_FR"
+    type="continuous">
+    <origin
+      xyz="0.199955093786635 -0.186235 -0.0610768464243844"
+      rpy="1.5707963267949 1.5707963267949 1.5707963267949" />
+    <parent
+      link="base_link" />
+    <child
+      link="wheel_FR" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+    <limit effort="9.1201845" velocity="8.79645942"/>
+  </joint>
+  <link
+    name="wheel_BL">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.389968906998643" />
+     <inertia
+        ixx="0.000322138046158454"
+        ixy="-6.65852858947508E-37"
+        ixz="-1.86618052242594E-37"
+        iyy="0.00048299257130799"
+        iyz="5.80382085092595E-22"
+        izz="0.000322138046158454" />   
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/wheel_BL.dae" scale="0.393700787 0.5 0.393700787"/>
+      </geometry>
+      <material
+        name="">
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/wheel_BL.dae" scale="0.393700787 0.5 0.393700787"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel_BL"
+    type="continuous">
+    <origin
+      xyz="-0.200044906213365 0.186235 -0.0610768464243844"
+      rpy="1.5707963267949 1.5707963267949 -1.5707963267949" />
+    <parent
+      link="base_link" />
+    <child
+      link="wheel_BL" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+    <limit effort="9.1201845" velocity="8.79645942"/>
+  </joint>
+  <link
+    name="wheel_BR">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.389968906998643" />
+      <inertia
+        ixx="0.000322138046158454"
+        ixy="-6.65852858947508E-37"
+        ixz="-1.86618052242594E-37"
+        iyy="0.00048299257130799"
+        iyz="5.80382085092595E-22"
+        izz="0.000322138046158454" /> 
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/wheel_BR.dae" scale="0.393700787 0.5 0.393700787"/>
+      </geometry>
+      <material
+        name=""> 
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/wheel_BR.dae" scale="0.393700787 0.5 0.393700787"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel_BR"
+    type="continuous">
+    <origin
+      xyz="-0.200044906213365 -0.186235 -0.0610768464243844"
+      rpy="1.5707963267949 1.5707963267949 1.5707963267949" />
+    <parent
+      link="base_link" />
+    <child
+      link="wheel_BR" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+    <limit effort="9.1201845" velocity="8.79645942"/>
+  </joint>
+  <link
+    name="support">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.389968906998643" />
+      <inertia
+        ixx="0.20"
+        ixy="0"
+        ixz="0"
+        iyy="0.10"
+        iyz="-0.08"
+        izz="0.14" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="-0.015 -0.19 -0.1"
+        rpy="1.5707963267949 0 1.5707963267949" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/support.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.5 0.5 0.5 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/support.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="support"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="support" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+  <link
+    name="plate">
+    <inertial>
+      <origin
+        xyz="-0.325 -0.25 -0.1"
+        rpy="1.5707963267949 0 1.5707963267949" />
+      <mass
+        value="0.389968906998643" />
+      <inertia
+        ixx="1.47"
+        ixy="-0.09"
+        ixz="-0.31"
+        iyy="1.46"
+        iyz="0.39"
+        izz="0.35" /> 
+    </inertial>
+    <visual>
+      <origin
+        xyz="-0.33 -0.25 -0.1"
+        rpy="1.5707963267949 0 1.5707963267949" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/plate.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.9 0.9 0.9 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://heron/meshes/plate.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="plate"
+    type="prismatic">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="plate" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+    <limit effort="147" lower="0.0" upper="0.386" velocity="0.039"/>
+  </joint>
+</robot>

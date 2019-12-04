@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/sly/heron_ws/devel/include/**",
+                "/opt/ros/kinetic/include/**",
+                "/home/sly/heron_ws/src/heron_software/include/**",
+                "/home/sly/heron_ws/src/laser_filters/include/**",
+                "/home/sly/heron_ws/src/serial/include/**",
+                "/home/sly/heron_ws/src/test_move/include/**",
+                "/home/sly/heron_ws/src/ti_mmwave_rospkg/include/**",
+                "/home/sly/heron_ws/src/timesync_ros/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

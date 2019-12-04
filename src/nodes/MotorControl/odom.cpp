@@ -46,6 +46,10 @@ private:
     double r_backLeft;
     double r_backRight;
 
+    double tmp_vx;
+    double tmp_vy;
+    double tmp_vth;
+
 
 public:
     ProcessOdom()
@@ -74,7 +78,20 @@ public:
 
         vx = (2*M_PI*WHEEL_RADIUS) * (r_frontLeft + r_frontRight + r_backLeft + r_backRight)/4;        // m/s
         vy = (2*M_PI*WHEEL_RADIUS) * (- r_frontLeft + r_frontRight - r_backLeft + r_backRight)/4;      // m/s
-        vth = - 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));                    // rad/s
+        vth = - 2*M_PI*WHEEL_RADIUS * (+ r_frontLeft - r_frontRight - r_backLeft + r_backRight) / (4*(WTOW_LENGHT + WTO_WIDTH));   // rad/s
+
+        if(vx > MAX_SPEED || vy > MAX_SPEED)
+        {
+            vx = tmp_vx;
+            vy = tmp_vy;
+            vth = tmp_vth;
+        }
+        else
+        { 
+            tmp_vx = vx;
+            tmp_vy = vy;
+            tmp_vth = vth;
+        }
 
         // debug
         // cout << endl << "odom vel : " << endl << "Vx: " << vx << " Vy: " << vy << " Vth: " << vth << endl;
@@ -86,6 +103,7 @@ public:
         x += delta_x;
         y += delta_y;
         th += delta_th;
+        
 
         //since all odometry is 6DOF we'll need a quaternion created from yaw
         geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
@@ -94,7 +112,7 @@ public:
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.stamp = current_time;
         odom_trans.header.frame_id = "odom";
-        odom_trans.child_frame_id = "map";
+        odom_trans.child_frame_id = "base_link";
 
         odom_trans.transform.translation.x = x;
         odom_trans.transform.translation.y = y;
@@ -116,10 +134,18 @@ public:
         odom.pose.pose.orientation = odom_quat;
 
         //set the velocity
-        odom.child_frame_id = "map";
+        odom.child_frame_id = "base_link";
         odom.twist.twist.linear.x = vx;
         odom.twist.twist.linear.y = vy;
         odom.twist.twist.angular.z = vth;
+
+        odom.pose.covariance[0] = 0.01;
+        odom.pose.covariance[7] = 0.01;
+        odom.pose.covariance[14] = 0.01;
+        odom.pose.covariance[21] = 0.1;
+        odom.pose.covariance[28] = 0.1;
+        odom.pose.covariance[35] = 0.1;
+
 
         //publish the message
         odom_pub.publish(odom);
