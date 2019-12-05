@@ -1,26 +1,36 @@
 <launch>
-  <arg
-    name="model" />
-  <arg
-    name="gui"
-    default="False" />
-  <param
-    name="robot_description"
-    textfile="$(find heron)/urdf/heron_urdf.urdf" />
-  <param
-    name="use_gui"
-    value="$(arg gui)" />
-  <node
-    name="joint_state_publisher"
-    pkg="joint_state_publisher"
-    type="joint_state_publisher" />
-  <node
-    name="robot_state_publisher"
-    pkg="robot_state_publisher"
-    type="state_publisher" />
+
+  <group ns = "heron01">
+
+    <arg
+      name="model" />
+    <arg
+      name="gui"
+      default="False" />
+    <param
+      name="robot_description"
+      textfile="$(find heron)/urdf/heron_urdf.urdf" />
+    <param
+      name="use_gui"
+      value="$(arg gui)" />
+    <node
+      name="joint_state_publisher"
+      pkg="joint_state_publisher"
+      type="joint_state_publisher" />
+    <node
+      name="robot_state_publisher"
+      pkg="robot_state_publisher"
+      type="state_publisher" />
+  </group>
   <node
     name="rviz"
     pkg="rviz"
     type="rviz"
-    args="-d $(find heron)/urdf.rviz" />
+    args="-d $(find heron)/urdf.rviz" >
+
+  <remap from="initialpose" to="/heron01/initialpose"/>
+  <remap from="move_base_simple/goal" to="/heron01/move_base_simple/goal"/>
+  
+  </node>
+    
 </launch>

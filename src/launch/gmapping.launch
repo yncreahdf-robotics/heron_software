@@ -1,9 +1,10 @@
 <launch>
     <group ns="heron01">    
         <node pkg="gmapping" type="slam_gmapping" name="gmapping_thing" output="screen" >
-            <remap from="scan" to="scan_filtered" />
-            <remap from="base_link" to="base_link" />
-            <remap from="odom" to="odom" />
+            <param name="xmin" value="-5"/>
+            <param name="xmax" value="5"/>
+            <param name="ymin" value="-5"/>
+            <param name="ymax" value="5"/>
         </node>
     </group>
   

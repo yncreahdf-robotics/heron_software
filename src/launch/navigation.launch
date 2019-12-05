@@ -5,13 +5,11 @@
    <!-- <group ns="heron01"> -->
 
       <node pkg="amcl" type="amcl" name="amcl">
-         <!-- Publish scans from best pose at a max of 10 Hz -->
       
-
          <param name="odom_model_type" value="omni"/>
 
          <param name="odom_alpha5" value="0.1"/>
-         <param name="transform_tolerance" value="0.2" />
+         <param name="transform_tolerance" value="0.5" />
          <param name="gui_publish_rate" value="10.0"/>
          <param name="laser_max_beams" value="30"/>
          <param name="min_particles" value="500"/>
@@ -41,14 +39,13 @@
          <param name="base_frame_id" value="base_link"/>
          <param name="global_frame_id" value="map"/>
 
-
-        
-
-         <remap from="scan" to="/heron01/scan_filtered" />
+         <remap from="scan" to="/heron01/scan" />
          <remap from="odom" to="/heron01/odom" />
          <remap from="initialpose" to="/heron01/initialpose" />
          <remap from="particlecloud" to="/heron01/particlecloud" />
+
       </node>
+   <!-- </group> -->
 
    <group ns="heron01">
       <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
@@ -57,9 +54,9 @@
          <rosparam file="$(find heron)/config/navigation/local_costmap_params.yaml" command="load" />
          <rosparam file="$(find heron)/config/navigation/global_costmap_params.yaml" command="load" /> 
          <rosparam file="$(find heron)/config/navigation/base_local_planner_params.yaml" command="load" />
-         <!-- <remap from="scan" to="/heron01/scan_filtered" />
-         <remap from="odom" to="/heron01/odom" /> -->
+         <remap from="scan" to="/heron01/scan" />
+         <remap from="odom" to="/heron01/odom" />
       </node>
 
-   </group>
+   </group> 
 </launch> 
