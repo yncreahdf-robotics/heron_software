@@ -4,7 +4,7 @@
 
    <!-- <group ns="heron01"> -->
 
-      <node pkg="amcl" type="amcl" name="amcl" args="scan:=scan_filtered">
+      <node pkg="amcl" type="amcl" name="amcl">
          <!-- Publish scans from best pose at a max of 10 Hz -->
       
 
@@ -46,16 +46,20 @@
 
          <remap from="scan" to="/heron01/scan_filtered" />
          <remap from="odom" to="/heron01/odom" />
+         <remap from="initialpose" to="/heron01/initialpose" />
+         <remap from="particlecloud" to="/heron01/particlecloud" />
       </node>
 
-
+   <group ns="heron01">
       <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
          <rosparam file="$(find heron)/config/navigation/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
          <rosparam file="$(find heron)/config/navigation/costmap_common_params.yaml" command="load" ns="local_costmap" />
          <rosparam file="$(find heron)/config/navigation/local_costmap_params.yaml" command="load" />
          <rosparam file="$(find heron)/config/navigation/global_costmap_params.yaml" command="load" /> 
          <rosparam file="$(find heron)/config/navigation/base_local_planner_params.yaml" command="load" />
+         <!-- <remap from="scan" to="/heron01/scan_filtered" />
+         <remap from="odom" to="/heron01/odom" /> -->
       </node>
 
-   <!-- </group> -->
+   </group>
 </launch> 
