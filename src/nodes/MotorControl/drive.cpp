@@ -229,10 +229,10 @@ class Driver
 
 			//Equations for mecanum wheeled robot
 
-			frontLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000); 
-			frontRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
-			backLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
-			backRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+			frontLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000); 
+			frontRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+			backLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+			backRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
 
 			
 			// usefull for debuging purpose

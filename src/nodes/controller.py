@@ -26,7 +26,7 @@ def callback(data):
     twist = Twist()
     twist.linear.x = data.axes[1] * 0.40 #robot linear speed
     twist.linear.y = data.axes[0] * 0.40
-    twist.angular.z = -data.axes[3] * (pi/2)
+    twist.angular.z = data.axes[3] * (pi/2)
     
     cmd_winch = Float32()
     global counter
