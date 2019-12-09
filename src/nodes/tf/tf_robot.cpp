@@ -1,10 +1,16 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
+#include "std_msgs/String.h"
+
+void winchCallback(const ) 
+  {
+    ROS_INFO("I heard: [%s]", msg->data.c_str());
+  }
 
 int main(int argc, char** argv){
-  ros::init(argc, argv, "robot_pieces_tf_publisher");
+  ros::init(argc, argv, "tf_robot");
   ros::NodeHandle n;
-
+  ros::Subscriber sub; 
 
   tf::TransformBroadcaster base_broadcaster;
   tf::TransformBroadcaster plate_broadcaster;
@@ -15,6 +21,8 @@ int main(int argc, char** argv){
   tf::TransformBroadcaster wheel_BL_broadcaster;
 
   while(n.ok()){
+    sub = n.subscribe("winch_high", 10, winchCallback);
+
     base_broadcaster.sendTransform(
       tf::StampedTransform(
         tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0, 0, 0.1)),
