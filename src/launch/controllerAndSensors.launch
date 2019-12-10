@@ -2,7 +2,7 @@
 
     <include file="$(find heron)/src/launch/bringUp.launch" />
 
-    <group ns="heron01">
+    <group ns="$ (optenv HERON_ID 0)">
 
         <include file="$(find heron)/src/launch/xboxController.launch" /> 
 

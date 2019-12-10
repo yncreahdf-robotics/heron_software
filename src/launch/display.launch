@@ -1,6 +1,6 @@
 <launch>
 
-  <group ns = "heron01">
+  <group ns="$ (optenv HERON_ID 0)">
 
     <arg
       name="model" />
@@ -28,8 +28,8 @@
     type="rviz"
     args="-d $(find heron)/urdf.rviz" >
 
-  <remap from="initialpose" to="/heron01/initialpose"/>
-  <remap from="move_base_simple/goal" to="/heron01/move_base_simple/goal"/>
+  <remap from="initialpose" to="$(optenv HERON_ID 0)/initialpose"/>
+  <remap from="move_base_simple/goal" to="$(optenv HERON_ID 0)/move_base_simple/goal"/>
   
   </node>
     

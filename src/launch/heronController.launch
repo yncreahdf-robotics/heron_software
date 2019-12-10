@@ -1,5 +1,5 @@
 <launch>
-    <group ns="heron01">
+    <group ns="$ (optenv HERON_ID 0)">
 
         <param name="frontDriver_port" type="string" value="/dev/roboteq_front" />
 		<param name="backDriver_port" type="string" value="/dev/roboteq_back" />	
