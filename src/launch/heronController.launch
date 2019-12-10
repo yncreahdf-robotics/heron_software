@@ -12,7 +12,6 @@
         <node name="controller" pkg="heron" type="controller.py" output="screen" /> 
 
         <node name="winch" pkg="heron" type="winch.py" output="screen" /> 
-            <param name="autorepeat_rate" value="20" />
 
         <node name="drive" pkg="heron" type="drive" output="screen" respawn="true" />
         
