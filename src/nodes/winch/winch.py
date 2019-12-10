@@ -32,7 +32,7 @@ def posInput(data):
 
     heightDesired_mm = data.data*1000 #we receive msg in meters, we work in mm
     
-    if (height_m < wch.MINHEIGHT or  height_mm > wch.MAXHEIGHT-1):
+    if (height_mm < wch.MINHEIGHT or  height_mm > wch.MAXHEIGHT-1):
         rospy.logerr("Wrong Position")
 
         heightData = calculateHeight()
