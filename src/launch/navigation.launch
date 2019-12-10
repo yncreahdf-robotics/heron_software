@@ -1,24 +1,14 @@
 <launch>
 
-   <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find heron)/map/arene2.pgm 0.05"/> -->
-
-   <!-- <group ns="$ (optenv HERON_ID 0)"> -->
-
-   <!-- </group> -->
+   <node name="map_server" pkg="map_server" type="map_server" args="$(find heron)/map/arene2.pgm 0.05">
+      <param name="frame_id" value="/map" />
+   </node>
 
    <group ns="$(optenv HERON_ID Heron00)">
-      <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-         <rosparam file="$(find heron)/config/navigation/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
-         <rosparam file="$(find heron)/config/navigation/costmap_common_params.yaml" command="load" ns="local_costmap" />
-         <rosparam file="$(find heron)/config/navigation/local_costmap_params.yaml" command="load" />
-         <rosparam file="$(find heron)/config/navigation/global_costmap_params.yaml" command="load" /> 
-         <rosparam file="$(find heron)/config/navigation/base_local_planner_params.yaml" command="load" />
-         <remap from="scan" to="$(optenv HERON_ID Heron00)/scan" />
-         <remap from="odom" to="$(optenv HERON_ID Heron00)/odom" />
-      </node>
 
+      <include file="$(find heron)/src/launch/move_base.launch" />  
+      <include file="$(find heron)/src/launch/amcl.launch" />  
 
-    <include file="$(find heron)/src/launch/amcl.launch" />  
-
+   </group>
 
 </launch> 
