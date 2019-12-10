@@ -55,7 +55,7 @@ def posInput(data):
             winchData.heightTicks = heightTicks 
             pub.publish(winchData)
             
-        rospy.logdebug("Pos reached")
+        rospy.loginfo("Pos reached")
 
     pub.publish(winchData)
 
