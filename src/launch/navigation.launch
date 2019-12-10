@@ -35,27 +35,27 @@
          <param name="update_min_d" value="0.1"/>
          <param name="update_min_a" value="0.5"/>
 
-         <param name="odom_frame_id" value="odom"/>
-         <param name="base_frame_id" value="base_link"/>
+         <param name="odom_frame_id" value="$(optenv HERON_ID Heron00)/odom"/>
+         <param name="base_frame_id" value="$(optenv HERON_ID Heron00)/base_link"/>
          <param name="global_frame_id" value="map"/>
 
-         <remap from="scan" to="$(optenv HERON_ID 0)/scan" />
-         <remap from="odom" to="$(optenv HERON_ID 0)/odom" />
-         <remap from="initialpose" to="$(optenv HERON_ID 0)/initialpose" />
-         <remap from="particlecloud" to="$(optenv HERON_ID 0)/particlecloud" />
+         <remap from="scan" to="$(optenv HERON_ID Heron00)/scan" />
+         <remap from="odom" to="$(optenv HERON_ID Heron00)/odom" />
+         <remap from="initialpose" to="$(optenv HERON_ID Heron00)/initialpose" />
+         <remap from="particlecloud" to="$(optenv HERON_ID Heron00)/particlecloud" />
 
       </node>
    <!-- </group> -->
 
-   <group ns="$(optenv HERON_ID 0)">
+   <group ns="$(optenv HERON_ID Heron00)">
       <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
          <rosparam file="$(find heron)/config/navigation/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
          <rosparam file="$(find heron)/config/navigation/costmap_common_params.yaml" command="load" ns="local_costmap" />
          <rosparam file="$(find heron)/config/navigation/local_costmap_params.yaml" command="load" />
          <rosparam file="$(find heron)/config/navigation/global_costmap_params.yaml" command="load" /> 
          <rosparam file="$(find heron)/config/navigation/base_local_planner_params.yaml" command="load" />
-         <remap from="scan" to="$(optenv HERON_ID 0)/scan" />
-         <remap from="odom" to="$(optenv HERON_ID 0)/odom" />
+         <remap from="scan" to="$(optenv HERON_ID Heron00)/scan" />
+         <remap from="odom" to="$(optenv HERON_ID Heron00)/odom" />
       </node>
 
    </group> 
