@@ -1,5 +1,5 @@
 <launch>
-
+<!-- Launches the Lidar and its filter (to get rid of the robot's self mesurements) -->
     <node name="rplidarNode" pkg="rplidar_ros" type="rplidarNode" output="screen">
         <param name="serial_port" type="string" value="/dev/lidar"/>
         <param name="serial_baudrate" type="int" value="256000"/>

@@ -1,0 +1,11 @@
+<launch>
+
+    <include file="$(find heron)/src/launch/bringUp.launch">
+
+    <group ns="heron01">
+
+        <include file="$(find heron)/src/launch/xboxController.launch"> 
+
+    </group>
+
+</launch>
