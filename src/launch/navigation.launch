@@ -4,18 +4,17 @@
 
    <!-- <group ns="$ (optenv HERON_ID 0)"> -->
 
-     
    <!-- </group> -->
 
-   <group ns="$(optenv HERON_ID 0)">
+   <group ns="$(optenv HERON_ID Heron00)">
       <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
          <rosparam file="$(find heron)/config/navigation/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
          <rosparam file="$(find heron)/config/navigation/costmap_common_params.yaml" command="load" ns="local_costmap" />
          <rosparam file="$(find heron)/config/navigation/local_costmap_params.yaml" command="load" />
          <rosparam file="$(find heron)/config/navigation/global_costmap_params.yaml" command="load" /> 
          <rosparam file="$(find heron)/config/navigation/base_local_planner_params.yaml" command="load" />
-         <remap from="scan" to="$(optenv HERON_ID 0)/scan" />
-         <remap from="odom" to="$(optenv HERON_ID 0)/odom" />
+         <remap from="scan" to="$(optenv HERON_ID Heron00)/scan" />
+         <remap from="odom" to="$(optenv HERON_ID Heron00)/odom" />
       </node>
 
 
