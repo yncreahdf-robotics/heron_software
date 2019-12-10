@@ -69,7 +69,7 @@ public:
     {
         current_time = ros::Time::now();
         dt = (current_time - last_time).toSec();
-
+        
         // calculate the roatation made by each wheel
         r_frontLeft = -(data.EncFl / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;      // tr/s
         r_frontRight = -(data.EncFr / ENCODERS_COUNTABLE_EVENTS_OUTPUT_SHAFT) / dt;
