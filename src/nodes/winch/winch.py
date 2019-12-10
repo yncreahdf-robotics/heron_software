@@ -32,14 +32,14 @@ def posInput(data):
 
     heightDesired_mm = data.data*1000 #we receive msg in meters, we work in mm
     
-    if (height_mm < wch.MINHEIGHT or  height_mm > wch.MAXHEIGHT-1):
+    if (heightDesired_mm < wch.MINHEIGHT or  heightDesired_mm > wch.MAXHEIGHT-1):
         rospy.logerr("Wrong Position")
 
         heightData = calculateHeight()
         heightTicks = heightData[1] #in ticks
         heightmm = heightData[0]
 
-        winchData.height = heightmm
+        winchData.height = heightmm/1000 # in meters
         winchData.heightTicks = heightTicks 
         pub.publish(winchData)
     
@@ -53,7 +53,7 @@ def posInput(data):
             heightTicks = heightData[1] #in ticks
             heightmm = heightData[0]
 
-            winchData.height = heightmm
+            winchData.height = heightmm/1000 # in meters
             winchData.heightTicks = heightTicks 
             pub.publish(winchData)
             
