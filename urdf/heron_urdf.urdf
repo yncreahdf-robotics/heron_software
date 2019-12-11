@@ -4,6 +4,7 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="heron_urdf">
+
   <link
     name="base_link">
     <inertial>
@@ -88,8 +89,8 @@
     name="wheel_FL"
     type="continuous">
     <origin
-      xyz="0.199955093786635 0.186235 -0.0610768464243844"
-      rpy="1.5707963267949 1.5707963267949 -1.5707963267949" />
+      xyz="0.2 -0.216235 -0.06"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -162,8 +163,8 @@
     name="wheel_FR"
     type="continuous">
     <origin
-      xyz="0.199955093786635 -0.186235 -0.0610768464243844"
-      rpy="1.5707963267949 1.5707963267949 1.5707963267949" />
+      xyz="0.2 -0.216235 -0.06"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -236,8 +237,8 @@
     name="wheel_BL"
     type="continuous">
     <origin
-      xyz="-0.200044906213365 0.186235 -0.0610768464243844"
-      rpy="1.5707963267949 1.5707963267949 -1.5707963267949" />
+      xyz="-0.2 0.216235 -0.06"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -310,8 +311,8 @@
     name="wheel_BR"
     type="continuous">
     <origin
-      xyz="-0.200044906213365 -0.186235 -0.0610768464243844"
-      rpy="1.5707963267949 1.5707963267949 1.5707963267949" />
+      xyz="-0.2 -0.216235 -0.06"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -386,7 +387,7 @@
     name="support"
     type="fixed">
     <origin
-      xyz="0 0 0"
+      xyz="-0.3 0 0"
       rpy="0 0 0" />
     <parent
       link="base_link" />
@@ -395,6 +396,8 @@
     <safety_controller
       k_velocity="0" />
   </joint>
+
+
   <link
     name="plate">
     <inertial>
@@ -439,14 +442,14 @@
     name="plate"
     type="prismatic">
     <origin
-      xyz="0 0 0"
+      xyz="-0.32 0 0.13"
       rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
       link="plate" />
     <axis
-      xyz="0 1 0" />
+      xyz="0 0 1" />
     <safety_controller
       k_velocity="0" />
     <limit effort="147" lower="0.0" upper="0.386" velocity="0.039"/>
