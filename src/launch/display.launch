@@ -32,5 +32,6 @@
   <remap from="move_base_simple/goal" to="$(optenv HERON_ID Heron00)/move_base_simple/goal"/>
   
   </node>
+  
     
 </launch>

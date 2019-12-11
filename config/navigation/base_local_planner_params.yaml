@@ -1,11 +1,32 @@
-TrajectoryPlannerROS:
-  max_vel_x: 0.25
-  min_vel_x: 0.05
-  max_vel_theta: 0.5
-  min_in_place_vel_theta: 0.4
+EBandPlannerROS:
+  # max_vel_x: 0.25
+  # min_vel_x: 0.05
+  # max_vel_theta: 0.5
+  # min_in_place_vel_theta: 0.4
 
-  acc_lim_theta: 3.2
-  acc_lim_x: 1
-  acc_lim_y: 1
+  # acc_lim_theta: 3.2
+  # acc_lim_x: 1
+  # acc_lim_y: 1
 
-  holonomic_robot: true
+  # holonomic_robot: true
+
+
+
+  #TRAJECTORY CONTROL
+  differential_drive: false
+  max_acceleration: 0.5
+
+  # velocity limits
+  max_vel_lin: 0.4
+  max_vel_th: 0.5
+  min_vel_lin: 0.05
+  min_vel_th: 0.05
+  min_in_place_vel_th: 0.0
+  in_place_trans_vel: 0.0
+
+  # goal tolerance
+  xy_goal_tolerance: 0.2
+  yaw_goal_tolerance: 0.2
+
+  # angular velocity PID
+  k_prop_: 0.75

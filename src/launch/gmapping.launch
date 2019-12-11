@@ -6,6 +6,8 @@
             <param name="ymin" value="-5"/>
             <param name="ymax" value="5"/>
         </node>
+        
+        <include file="$(find heron)/src/launch/xboxController.launch" /> 
     </group>
   
 </launch>
