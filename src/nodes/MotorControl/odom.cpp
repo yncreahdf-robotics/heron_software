@@ -62,6 +62,10 @@ public:
         sub = n.subscribe("sensor_encs", 10, &ProcessOdom::callback, this);
         odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
         n.getParam("tf_prefix", tf_prefix);
+        if(tf_prefix.size() > 0)
+        {
+            tf_prefix += "/";
+        }
 
         // init map at 0;0;0
         pose.x = 0;

@@ -17,6 +17,10 @@ int main(int argc, char** argv){
 
   string tf_prefix;
   n.getParam("tf_prefix", tf_prefix);
+  if(tf_prefix.size() > 0)
+    {
+      tf_prefix += "/";
+    }
 
   tf::Quaternion laser_quat;
   laser_quat.setRPY(0, 0, M_PI);
