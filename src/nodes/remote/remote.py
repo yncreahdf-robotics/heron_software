@@ -4,41 +4,38 @@ from sensor_msgs.msg import Joy
 import os, sys
 import roslaunch
 
-switch = False
+
+switch = True
 
 uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
 roslaunch.configure_logging(uuid)
 launch = roslaunch.parent.ROSLaunchParent(uuid,[str(os.getcwd())+"/catkin_ws/src/heron_software/src/launch/xboxController.launch"])
 
+def dummy_function(): pass
+launch._init_signal_handlers = dummy_function
+
 def callback(data):
     global switch
-    global launch
     if(data.buttons[6]):
         switch = not(switch)
 
         if(switch):
-            try:
-                launch.start()
-                launch.
-                print("launching controller")
-            except:
-                print("launching failed")
-        else:
+            os.system("roslaunch heron xboxController.launch")
+            launch.start()
+            print("launching controller")
+
+        if(not(switch)):
             launch.shutdown()
             print("shutting down controller")
 
+    
 
-
-
-# Intializes everything
-def start():
-     # starts the node
+if __name__ == '__main__':
+    # starts the node
     rospy.init_node('remote')
 
     # subscribed to joystick inputs on topic "joy"
-    rospy.Subscriber("joy", Joy, callback)   
-    rospy.spin()
+    rospy.Subscriber("joy", Joy, callback)
 
-if __name__ == '__main__':
-    start()
+    rospy.spin()
     
