@@ -5,7 +5,11 @@
             <param name="xmax" value="5"/>
             <param name="ymin" value="-5"/>
             <param name="ymax" value="5"/>
+
+            <param name="odom_frame" value="$(optenv HERON_ID Heron00)/odom"/>
         </node>
+
+        <param name="tf_prefix" value="$(optenv HERON_ID Heron00)" />
         
         <include file="$(find heron)/src/launch/xboxController.launch" /> 
     </group>
