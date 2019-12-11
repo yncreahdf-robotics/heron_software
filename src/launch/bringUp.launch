@@ -1,0 +1,26 @@
+<launch>
+<!-- Launches every sensors and actuators on Heron robot -->
+    <group ns="$(optenv HERON_ID Heron00)">
+    
+        <param name="frontDriver_port" type="string" value="/dev/roboteq_front" />
+		<param name="backDriver_port" type="string" value="/dev/roboteq_back" />	 
+
+        <node name="drive" pkg="heron" type="drive" output="screen" respawn="true" />
+        
+        <node name="odom" pkg="heron" type="odom" output="screen" respawn="true" />
+
+        <node name="winch" pkg="heron" type="winch.py" />
+
+
+        <node name="lpms_imu" pkg="lpms_imu" type="lpms_imu_node" output="screen" respawn="true" />
+        
+        <include file="$(find heron)/src/launch/lidar.launch" />
+
+
+        <param name="tf_prefix" value="$(optenv HERON_ID Heron00)" />
+
+        <node name="tf_broadcaster" pkg="heron" type="tf_broadcaster" respawn="true" />
+
+    </group>
+
+</launch>

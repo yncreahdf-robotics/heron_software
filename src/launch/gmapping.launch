@@ -1,5 +1,5 @@
 <launch>
-    <group ns="heron01">    
+    <group ns="$(optenv HERON_ID Heron00)">    
         <node pkg="gmapping" type="slam_gmapping" name="gmapping_thing" output="screen" >
             <param name="xmin" value="-5"/>
             <param name="xmax" value="5"/>
