@@ -27,6 +27,8 @@ private:
 
     tf::TransformBroadcaster odom_broadcaster;
 
+    string tf_prefix;
+
     ros::Time current_time, last_time;
 
     struct WheelsEncoders
@@ -59,6 +61,11 @@ public:
         cout << "Initialize Odom" << endl;
         sub = n.subscribe("sensor_encs", 10, &ProcessOdom::callback, this);
         odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
+        n.getParam("tf_prefix", tf_prefix);
+        if(tf_prefix.size() > 0)
+        {
+            tf_prefix += "/";
+        }
 
         // init map at 0;0;0
         pose.x = 0;
@@ -118,8 +125,8 @@ public:
         //first, we'll publish the transform over tf
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.stamp = current_time;
-        odom_trans.header.frame_id = "odom";
-        odom_trans.child_frame_id = "base_link";
+        odom_trans.header.frame_id = tf_prefix + "odom";
+        odom_trans.child_frame_id = tf_prefix + "base_link";
 
         odom_trans.transform.translation.x = pose.x;
         odom_trans.transform.translation.y = pose.y;
@@ -132,7 +139,7 @@ public:
         //next, we'll publish the odometry message over ROS
         nav_msgs::Odometry odom;
         odom.header.stamp = current_time;
-        odom.header.frame_id = "odom";
+        odom.header.frame_id = tf_prefix + "odom";
 
         //set the position
         odom.pose.pose.position.x = pose.x;
@@ -141,7 +148,7 @@ public:
         odom.pose.pose.orientation = odom_quat;
 
         //set the velocity
-        odom.child_frame_id = "base_link";
+        odom.child_frame_id = tf_prefix + "base_link";
         odom.twist.twist.linear.x = speed.vx;
         odom.twist.twist.linear.y = speed.vy;
         odom.twist.twist.angular.z = speed.vth;
