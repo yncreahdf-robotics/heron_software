@@ -27,15 +27,9 @@
     pkg="rviz"
     type="rviz"
     args="-d $(find heron)/urdf.rviz" >
-<<<<<<< HEAD
-  
-  <remap from="initialpose" to="/heron01/initialpose"/>
-  <remap from="move_base_simple/goal" to="/heron01/move_base_simple/goal"/>
-=======
 
   <remap from="initialpose" to="$(optenv HERON_ID Heron00)/initialpose"/>
   <remap from="move_base_simple/goal" to="$(optenv HERON_ID Heron00)/move_base_simple/goal"/>
->>>>>>> 7bd1f935b039502e694bdd378dccc1ddf091c6d5
   
   </node>
   
