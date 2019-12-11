@@ -7,6 +7,7 @@
             <param name="ymax" value="5"/>
 
             <param name="odom_frame" value="$(optenv HERON_ID Heron00)/odom"/>
+            <param name="base_frame" value="$(optenv HERON_ID Heron00)/base_link"/>
         </node>
 
         <param name="tf_prefix" value="$(optenv HERON_ID Heron00)" />
