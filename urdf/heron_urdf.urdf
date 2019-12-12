@@ -89,7 +89,7 @@
     name="wheel_FL"
     type="continuous">
     <origin
-      xyz="0.2 -0.216235 -0.06"
+      xyz="0.2 0.216235 -0.06"
       rpy="0 0 0" />
     <parent
       link="base_link" />

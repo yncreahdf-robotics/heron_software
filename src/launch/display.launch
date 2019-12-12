@@ -1,9 +1,17 @@
 <launch>
+<group ns="heron01">
   <arg
     name="model" />
   <arg
     name="gui"
     default="False" />
+  <arg name="des_x" default="10"/>
+  <arg name="des_y" default="10"/>
+  <arg name="des_theta"  default="1.9"/>
+
+  <param name="des_pos_x" value="$(arg des_x)" />
+  <param name="des_pos_y" value="$(arg des_y)" />
+  <param name="des_pos_yaw" value="$(arg des_theta)" />
   <param
     name="robot_description"
     textfile="$(find heron)/urdf/heron_urdf.urdf" />
@@ -13,15 +21,18 @@
   <node
     name="joint_state_publisher"
     pkg="joint_state_publisher"
-    type="joint_state_publisher" /> 
-  <!-- <node
+    type="joint_state_publisher" >
+    <rosparam param="source_list">["plate_joint_states"]</rosparam>
+  </node>
+  <node
     name="robot_state_publisher"
     pkg="robot_state_publisher"
-    type="state_publisher" /> -->
+    type="state_publisher" />
   <node name="tf_robot" pkg="heron" type="tf_robot" respawn="true" output="screen" />
   <node
     name="rviz"
     pkg="rviz"
     type="rviz"
     args="-d $(find heron)/urdf.rviz" />
-  </launch>
+</group>
+</launch>
