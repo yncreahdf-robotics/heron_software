@@ -18,6 +18,7 @@
         pkg="joint_state_publisher"
         type="joint_state_publisher" >
         <rosparam param="source_list">["plate_joint_states"]</rosparam>
+        <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" />
     </node>
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
       <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" />
@@ -25,8 +26,8 @@
 
     <node name="tf_robot" pkg="heron" type="tf_robot" respawn="true" output="screen" />
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find heron)/urdf.rviz" >
-      <remap from="initialpose" to="$(optenv HERON_ID Heron00)/initialpose"/>
-      <remap from="move_base_simple/goal" to="$(optenv HERON_ID Heron00)/move_base_simple/goal"/>
+      <remap from="/initialpose" to="initialpose"/>
+      <remap from="/move_base_simple/goal" to="move_base_simple/goal"/>
     </node>
   </group>
 </launch>
