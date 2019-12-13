@@ -15,5 +15,7 @@
         
         <include file="$(find heron)/src/launch/xboxController.launch" /> 
     </group>
+
+    <include file="$(find heron)/src/launch/xboxController.launch" />
   
 </launch>
