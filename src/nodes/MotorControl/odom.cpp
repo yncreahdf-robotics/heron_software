@@ -130,7 +130,7 @@ public:
 
         odom_trans.transform.translation.x = pose.x;
         odom_trans.transform.translation.y = pose.y;
-        odom_trans.transform.translation.z = 0.1;
+        odom_trans.transform.translation.z = 0.0;
         odom_trans.transform.rotation = odom_quat;
 
         //send the transform
@@ -144,7 +144,7 @@ public:
         //set the position
         odom.pose.pose.position.x = pose.x;
         odom.pose.pose.position.y = pose.y;
-        odom.pose.pose.position.z = 0.1;
+        odom.pose.pose.position.z = 0.0;
         odom.pose.pose.orientation = odom_quat;
 
         //set the velocity
