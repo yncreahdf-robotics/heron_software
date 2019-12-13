@@ -1,6 +1,7 @@
 <launch>
   <include
     file="$(find gazebo_ros)/launch/empty_world.launch" />
+
   <node
     name="tf_footprint_base"
     pkg="tf"
@@ -10,11 +11,8 @@
     name="spawn_model"
     pkg="gazebo_ros"
     type="spawn_model"
-    args="-file $(find heron)/urdf/heron_urdf.urdf -urdf -model heron_urdf"
+    args="-urdf -x 0 -y 0 -z 0 -file $(find heron)/urdf/heron_urdf.urdf -urdf -model heron_urdf"
     output="screen" />
-  <node
-    name="fake_joint_calibration"
-    pkg="rostopic"
-    type="rostopic"
-    args="pub /calibrated std_msgs/Bool true" />
+    <node name="tf_robot" pkg="heron" type="tf_robot" respawn="true" output="screen" />
+
 </launch>
