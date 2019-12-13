@@ -37,15 +37,22 @@ int main(int argc, char** argv){
   ros::NodeHandle n;
   ros::Subscriber sub;
 
+  string tf_prefix;
+  n.getParam("tf_prefix", tf_prefix);
+  if(tf_prefix.size() > 0)
+    {
+      tf_prefix += "/";
+    }
+
   tf::TransformBroadcaster base_broadcaster;
-  joint_state.name.push_back("plate");
+  joint_state.name.push_back(tf_prefix + "plate");
   joint_state.position.push_back(0);
   while(n.ok()){
     ros::spinOnce();
     base_broadcaster.sendTransform(
       tf::StampedTransform(
         tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0, 0, 0.1)),
-        ros::Time::now(),"odom", "base_link"));
+        ros::Time::now(), tf_prefix + "odom", tf_prefix + "base_link"));
 
     sub = n.subscribe("winch_Height", 10, winchCallback);
     plate_pub = n.advertise<sensor_msgs::JointState>("plate_joint_states",10);
