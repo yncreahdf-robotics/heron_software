@@ -12,7 +12,7 @@
     </node>
 
     <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="laser_filter">
-        <rosparam command="load" file="$(find heron)/config/laser_filter/range_filter.yaml" />
+        <rosparam command="load" file="$(find heron)/config/laser_filter/box_filter.yaml" />
         <remap from="scan" to="rough_scan" />
         <remap from="scan_filtered" to="scan" />
     </node>
