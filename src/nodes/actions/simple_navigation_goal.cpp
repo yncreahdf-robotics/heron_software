@@ -30,7 +30,7 @@ class Motion
     public:
         Motion()
         {
-            cout << endl << "Initialize Move to Action" << endl;
+            cout << "success" << endl;
             //Subscribe to move_to topic and call the moveTo function 
             sub = n.subscribe("move_to", 1, &Motion::moveTo, this);
             winch_pub = n.advertise<std_msgs::Float32>("cmd_pos_winch", 1);
@@ -94,16 +94,11 @@ class Motion
 
 
 
-
-
-
-
-
-
 int main(int argc, char** argv){
-    ros::init(argc, argv, "simple_navigation_goals");
+    cout << "Initialize Move to Action" << endl;
+    ros::init(argc, argv, "simple_navigation_goal");
 
-    Motion motion();
+    Motion motion;
 
     ros::spin();
     
