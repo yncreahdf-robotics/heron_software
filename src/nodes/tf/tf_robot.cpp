@@ -44,9 +44,9 @@ int main(int argc, char** argv){
       tf_prefix += "/";
     }
 
-  joint_state.name.push_back(tf_prefix + "plate");
+  joint_state.name.push_back("plate");
   joint_state.position.push_back(0);
-  
+
   while(n.ok()){
     ros::spinOnce();
     sub = n.subscribe("winch_Height", 10, winchCallback);
