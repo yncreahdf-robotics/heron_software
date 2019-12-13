@@ -130,7 +130,7 @@ public:
 
         odom_trans.transform.translation.x = pose.x;
         odom_trans.transform.translation.y = pose.y;
-        odom_trans.transform.translation.z = 0.0;
+        odom_trans.transform.translation.z = 0.1;
         odom_trans.transform.rotation = odom_quat;
 
         //send the transform
