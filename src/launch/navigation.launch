@@ -1,0 +1,17 @@
+<launch>
+ 
+  <!-- Run the map server -->
+  <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find heron)/map/arenedemobg.pgm 0.05" >
+    <param name="frame_id" value="map" />
+  </node> -->
+
+  <group ns="$(optenv HERON_ID Heron00)">
+    <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" />
+  </group>
+
+  <include file="$(find heron)/src/launch/one_robot.launch">
+    <arg name="robot_name" value="$(optenv HERON_ID Heron00)"/>
+  </include>
+  
+
+</launch>

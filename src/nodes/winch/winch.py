@@ -28,22 +28,36 @@ pub = rospy.Publisher('winch_Height', MsgWinch, queue_size=10)
 
 
 def posInput(data):
-    winchData=MsgWinch()
-    
-    if (data.data < wch.MINHEIGHT or  data.data > wch.MAXHEIGHT-1):
-        rospy.logerr("Wrong Position")
-        winchData.height=calculateHeight()[0]
-        pub.publish(winchData)
+    winchData = MsgWinch() #msg declaration
 
+    heightDesired_mm = data.data*1000 #we receive msg in meters, we work in mm
+    
+    if (heightDesired_mm < wch.MINHEIGHT or  heightDesired_mm > wch.MAXHEIGHT-1):
+        rospy.logerr("Wrong Position")
+
+        heightData = calculateHeight()
+        heightTicks = heightData[1] #in ticks
+        heightmm = heightData[0]
+
+        winchData.height = heightmm/1000 # in meters
+        winchData.heightTicks = heightTicks 
+        pub.publish(winchData)
+    
     else:
-        desiredPos=int((data.data-wch.MINHEIGHT)*wch.TICKSPERMM)
+        desiredPos = int((heightDesired_mm-wch.MINHEIGHT)*wch.TICKSPERMM)
         rospy.loginfo("Position goal: %d ",desiredPos)
         roboclaw.SpeedAccelDeccelPositionM1(address,wch.ACCELTICKS,wch.MAXSPEEDTICKS,wch.DECELTICKS,desiredPos,0)
 
         while(roboclaw.ReadEncM1(address)[1]!= desiredPos):
-            winchData.height=calculateHeight()[0]
+            heightData = calculateHeight()
+            heightTicks = heightData[1] #in ticks
+            heightmm = heightData[0]
+
+            winchData.height = heightmm/1000 # in meters
+            winchData.heightTicks = heightTicks 
             pub.publish(winchData)
-        rospy.loginfo("End")
+            
+        rospy.loginfo("Pos reached")
 
     pub.publish(winchData)
 
@@ -56,8 +70,6 @@ def calculateHeight():
 
 
 def controllerInput(data):
-    #global heightTicks
-    #global height
     winchData=MsgWinch()
 
     desiredSpeedInMS = data.data #speed input from remote controller m.s-1
@@ -100,7 +112,12 @@ def controllerInput(data):
     else: 
         roboclaw.SpeedAccelM1(address,wch.ACCELTICKS,int(desiredSpeedInTicks))
     
-    winchData.height=calculateHeight()[0]
+    heightData = calculateHeight()
+    heightTicks = heightData[1] #in ticks
+    heightmm = heightData[0]
+
+    winchData.height = heightmm/1000 # in meters
+    winchData.heightTicks = heightTicks 
     pub.publish(winchData)
     
      
@@ -120,11 +137,10 @@ def shutdown():
 def start():
     # publishing to "Heron/cmd_vel" to control Heron
     # starts the node
-    rospy.init_node("winch_node",log_level=rospy.DEBUG)
+    rospy.init_node("winch_node",log_level=rospy.INFO)
     
     rospy.Subscriber("cmd_vel_winch", Float32, controllerInput, queue_size=1)
-    #rospy.Subscriber("winch_Height", MsgWinch, update_height, queue_size=5)
-    rospy.Subscriber("cmd_pos_winch", Float32, posInput, queue_size = 1)
+    rospy.Subscriber("cmd_pos_winch", Float32, posInput, queue_size = 1)  # height desired in meter
 
     
 

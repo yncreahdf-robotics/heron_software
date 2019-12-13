@@ -1,0 +1,19 @@
+<launch>
+    <group ns="$(optenv HERON_ID Heron00)">    
+        <node pkg="gmapping" type="slam_gmapping" name="gmapping_thing" output="screen" >
+            <param name="xmin" value="-5"/>
+            <param name="xmax" value="5"/>
+            <param name="ymin" value="-5"/>
+            <param name="ymax" value="5"/>
+
+            <param name="odom_frame" value="$(optenv HERON_TF Heron00)/odom"/>
+            <param name="base_frame" value="$(optenv HERON_TF Heron00)/base_link"/>
+            <param name="map_frame" value="/map" />
+        </node>
+
+        <!-- <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" /> -->
+        
+        <include file="$(find heron)/src/launch/xboxController.launch" /> 
+    </group>
+  
+</launch>

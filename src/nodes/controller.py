@@ -19,14 +19,14 @@ import winch_specs
 # axis 1 aka left stick vertical controls linear speed
 # axis 0 aka left stick horizonal controls linear speed
 # axis 3 aka right stick horizonal controls angular speed
-# Warning on Xbox controller y axis is reversed !
 
 counter = 0
 
 def callback(data):
     twist = Twist()
     twist.linear.x = data.axes[1] * 0.40 #robot linear speed
-    twist.linear.y = - data.axes[0] * 0.40
+    twist.linear.y = data.axes[0] * 0.40
+    twist.angular.z = data.axes[3] * (pi/2)
     
     cmd_winch = Float32()
     global counter
@@ -41,17 +41,15 @@ def callback(data):
     else:
         cmd_winch.data = ((data.axes[2] - data.axes[5])*(winch_specs.MAXSPEED_M_S/2) )
 
-   
-    twist.angular.z = -data.axes[3] * (pi/2)
     
-    if(data.axes[7] < 0):
-        twist.linear.x = 0.44
-    if(data.axes[7] > 0):
-        twist.linear.x = -0.44
-    if(data.axes[6] < 0):
-        twist.linear.y = 0.44
-    if(data.axes[6] > 0):
-        twist.linear.y = -0.44
+    # if(data.axes[7] < 0):
+    #     twist.linear.x = 0.44
+    # if(data.axes[7] > 0):
+    #     twist.linear.x = -0.44
+    # if(data.axes[6] < 0):
+    #     twist.linear.y = 0.44
+    # if(data.axes[6] > 0):
+    #     twist.linear.y = -0.44
 
     # if(data.axes[2] > 0 or data.axes[5] > 0):
     #     twist.linear.x = 0
