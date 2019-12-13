@@ -36,7 +36,6 @@ int main(int argc, char** argv){
   ros::init(argc, argv, "robot_tf_publisher_pieces");
   ros::NodeHandle n;
   ros::Subscriber sub;
-  tf::TransformBroadcaster base_broadcaster;
 
   string tf_prefix;
   n.getParam("tf_prefix", tf_prefix);
@@ -50,11 +49,6 @@ int main(int argc, char** argv){
 
   while(n.ok()){
     ros::spinOnce();
-
-    base_broadcaster.sendTransform(
-      tf::StampedTransform(
-        tf::Transform(tf::Quaternion(0.0, 0.0, 0.0, 1.0), tf::Vector3(0.0, 0.0, 0.1)),
-        ros::Time::now(),tf_prefix + "map", tf_prefix + "base_link"));
 
     sub = n.subscribe("winch_Height", 10, winchCallback);
     plate_pub = n.advertise<sensor_msgs::JointState>("plate_joint_states",10);
