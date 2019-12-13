@@ -100,5 +100,8 @@ int main(int argc, char** argv){
 
     Motion motion();
 
+    ros::spin();
+    
+    return 0;
   
 }
