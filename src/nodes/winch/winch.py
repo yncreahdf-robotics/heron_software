@@ -32,9 +32,18 @@ def posInput(data):
 
     heightDesired_mm = data.data*1000 #we receive msg in meters, we work in mm
     
-    if (heightDesired_mm < wch.MINHEIGHT or  heightDesired_mm > wch.MAXHEIGHT-1):
-        rospy.logerr("Wrong Position")
+    if (heightDesired_mm <= wch.MINHEIGHT):
+        heightDesired_mm = wch.MINHEIGHT
+    
+    elif(heightDesired_mm >= wch.MAXHEIGHT):
+        heightDesired_mm = wch.MAXHEIGHT-1
 
+
+    desiredPos = int((heightDesired_mm-wch.MINHEIGHT)*wch.TICKSPERMM)
+    rospy.loginfo("Position goal: %d ",desiredPos)
+    roboclaw.SpeedAccelDeccelPositionM1(address,wch.ACCELTICKS,wch.MAXSPEEDTICKS,wch.DECELTICKS,desiredPos,0)
+
+    while(roboclaw.ReadEncM1(address)[1]!= desiredPos):
         heightData = calculateHeight()
         heightTicks = heightData[1] #in ticks
         heightmm = heightData[0]
@@ -42,22 +51,8 @@ def posInput(data):
         winchData.height = heightmm/1000 # in meters
         winchData.heightTicks = heightTicks 
         pub.publish(winchData)
-    
-    else:
-        desiredPos = int((heightDesired_mm-wch.MINHEIGHT)*wch.TICKSPERMM)
-        rospy.loginfo("Position goal: %d ",desiredPos)
-        roboclaw.SpeedAccelDeccelPositionM1(address,wch.ACCELTICKS,wch.MAXSPEEDTICKS,wch.DECELTICKS,desiredPos,0)
-
-        while(roboclaw.ReadEncM1(address)[1]!= desiredPos):
-            heightData = calculateHeight()
-            heightTicks = heightData[1] #in ticks
-            heightmm = heightData[0]
-
-            winchData.height = heightmm/1000 # in meters
-            winchData.heightTicks = heightTicks 
-            pub.publish(winchData)
-            
-        rospy.loginfo("Pos reached")
+        
+    rospy.loginfo("Pos reached")
 
     pub.publish(winchData)
 
