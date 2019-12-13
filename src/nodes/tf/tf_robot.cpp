@@ -44,16 +44,11 @@ int main(int argc, char** argv){
       tf_prefix += "/";
     }
 
-  tf::TransformBroadcaster base_broadcaster;
   joint_state.name.push_back(tf_prefix + "plate");
   joint_state.position.push_back(0);
+  
   while(n.ok()){
     ros::spinOnce();
-    base_broadcaster.sendTransform(
-      tf::StampedTransform(
-        tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0, 0, 0.1)),
-        ros::Time::now(), tf_prefix + "odom", tf_prefix + "base_link"));
-
     sub = n.subscribe("winch_Height", 10, winchCallback);
     plate_pub = n.advertise<sensor_msgs::JointState>("plate_joint_states",10);
 

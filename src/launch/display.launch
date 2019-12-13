@@ -10,6 +10,7 @@
     <param
       name="robot_description"
       textfile="$(find heron)/urdf/heron_urdf.urdf" />
+    <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" />
     <param
       name="use_gui"
       value="$(arg gui)" />
@@ -18,23 +19,14 @@
         type="joint_state_publisher" >
         <rosparam param="source_list">["plate_joint_states"]</rosparam>
     </node>
-    <node
-      name="robot_state_publisher"
-      pkg="robot_state_publisher"
-      type="state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+      <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" />
+    </node>
 
-  <node name="tf_robot" pkg="heron" type="tf_robot" respawn="true" output="screen" />
-  <node
-    name="rviz"
-    pkg="rviz"
-    type="rviz"
-    args="-d $(find heron)/urdf.rviz" >
-
-  <remap from="initialpose" to="$(optenv HERON_ID Heron00)/initialpose"/>
-  <remap from="move_base_simple/goal" to="$(optenv HERON_ID Heron00)/move_base_simple/goal"/>
-  
-  </node>
-  
-    
-</group>
+    <node name="tf_robot" pkg="heron" type="tf_robot" respawn="true" output="screen" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find heron)/urdf.rviz" >
+      <remap from="initialpose" to="$(optenv HERON_ID Heron00)/initialpose"/>
+      <remap from="move_base_simple/goal" to="$(optenv HERON_ID Heron00)/move_base_simple/goal"/>
+    </node>
+  </group>
 </launch>
