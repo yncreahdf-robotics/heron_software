@@ -7,6 +7,7 @@
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <std_msgs/Float32.h>
+#include <std_msgs/Bool.h>
 #include <actionlib/client/simple_action_client.h>
 
 using namespace std;
@@ -20,6 +21,7 @@ class Motion
 
 		ros::Subscriber sub;
         ros::Publisher winch_pub;
+        ros::Publisher goal_reached_pub;
 
         // custom msg
         heron::Motion motion_msg;
@@ -34,6 +36,7 @@ class Motion
             //Subscribe to move_to topic and call the moveTo function 
             sub = n.subscribe("move_to", 1, &Motion::moveTo, this);
             winch_pub = n.advertise<std_msgs::Float32>("cmd_pos_winch", 1);
+            goal_reached_pub = n.advertise<std_msgs::Bool>("goal_reached", 1);
 
             n.getParam("tf_prefix", tf_prefix);
             if(tf_prefix.size() > 0)
@@ -58,9 +61,10 @@ class Motion
             move_base_msgs::MoveBaseGoal goal;
 
             std_msgs::Float32 winch_pos;
+            std_msgs::Bool goal_reached;
 
             //we'll send a goal to the robot to move 
-            goal.target_pose.header.frame_id = tf_prefix + "base_link";
+            goal.target_pose.header.frame_id = tf_prefix + "map";
             goal.target_pose.header.stamp = ros::Time::now();
 
             // put the plate down before moving
@@ -84,11 +88,14 @@ class Motion
                 winch_pos.data = data.plate_height;
                 winch_pub.publish(winch_pos);
                 ROS_INFO("Hooray, the base moved to the location");
+                goal_reached.data = true;
             }
             else
             {
                 ROS_INFO("The base failed to move to the location for some reason");
+                goal_reached.data = false;
             }
+            goal_reached_pub.publish(goal_reached);
         }
 };
 
