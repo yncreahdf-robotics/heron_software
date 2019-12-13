@@ -1,6 +1,7 @@
-float32 x
-float32 y
+float32 position_x
+float32 position_y
 
-float32 th
+float32 orientation_z
+float32 orientation_w
 
 float32 plate_height
