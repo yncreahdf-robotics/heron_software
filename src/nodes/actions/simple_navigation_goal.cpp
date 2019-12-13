@@ -79,12 +79,16 @@ class Motion
             ac.waitForResult();
 
             if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+            {
                 // once it reaches the position we get the plate leveled
                 winch_pos.data = data.plate_height;
                 winch_pub.publish(winch_pos);
                 ROS_INFO("Hooray, the base moved to the location");
+            }
             else
+            {
                 ROS_INFO("The base failed to move to the location for some reason");
+            }
         }
 };
 
