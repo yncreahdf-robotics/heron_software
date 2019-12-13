@@ -67,9 +67,10 @@ class Motion
             winch_pos.data = 0;
             winch_pub.publish(winch_pos);
 
-            goal.target_pose.pose.position.x = data.x;
-            goal.target_pose.pose.position.y = data.y;
-            goal.target_pose.pose.orientation.w = data.th;
+            goal.target_pose.pose.position.x = data.position_x;
+            goal.target_pose.pose.position.y = data.position_y;
+            goal.target_pose.pose.orientation.z = data.orientation_z;
+            goal.target_pose.pose.orientation.w = data.orientation_w;
 
             
             ROS_INFO("Sending goal");
