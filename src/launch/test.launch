@@ -1,0 +1,17 @@
+<launch>
+<!-- Launches every sensors and actuators on Heron robot -->
+    <group ns="$(optenv HERON_ID Heron00)">
+    
+        <node name="xbox_controler" pkg="joy" type="joy_node" >
+            <param name="dev" type="string" value="/dev/input/js0" />
+            <param name="autorepeat_rate" value="20" />
+        </node>
+
+        <node name="remote" pkg="heron" type="remote.py" respawn="true">
+            <param name="launch" type="string" value="xboxController.launch" />
+            <param name="button" type="int" value="6" />
+        </node>
+
+    </group>
+
+</launch>

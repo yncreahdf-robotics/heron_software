@@ -13,7 +13,11 @@
 
         <!-- <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" /> -->
         
-        <include file="$(find heron)/src/launch/xboxController.launch" /> 
+        <node name="xbox_controler" pkg="joy" type="joy_node" >
+            <param name="dev" type="string" value="/dev/input/js0" />
+            <param name="autorepeat_rate" value="20" />
+        </node>
+          
     </group>
 
     <include file="$(find heron)/src/launch/xboxController.launch" />
