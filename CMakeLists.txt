@@ -67,9 +67,6 @@ add_executable(tf_broadcaster src/nodes/tf/tf_broadcaster.cpp)
 target_link_libraries(tf_broadcaster ${catkin_LIBRARIES})
 #add_dependencies(tf_broadcaster heron_generate_messages_cpp)
 
-add_executable(simple_navigation_goal src/nodes/actions/simple_navigation_goal.cpp)
-target_link_libraries(simple_navigation_goal ${catkin_LIBRARIES})
-add_dependencies(simple_navigation_goal heron_generate_messages_cpp)
 
 add_executable(tf_robot src/nodes/tf/tf_robot.cpp)
 target_link_libraries(tf_robot ${catkin_LIBRARIES})
