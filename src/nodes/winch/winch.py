@@ -45,15 +45,15 @@ def posInput(data):
 
     while(roboclaw.ReadEncM1(address)[1]!= desiredPos):
         heightData = calculateHeight()
-        heightTicks = heightData[1] #in ticks
-        heightmm = heightData[0]
-
-        winchData.height = heightmm/1000 # in meters
-        winchData.heightTicks = heightTicks 
+        winchData.height = heightData[0]/1000 # height in meters
+        winchData.heightTicks =  heightData[1]# height in ticks
         pub.publish(winchData)
         
     rospy.loginfo("Pos reached")
 
+    heightData = calculateHeight()
+    winchData.height = heightData[0]/1000 # height in meters
+    winchData.heightTicks =  heightData[1]# height in ticks
     pub.publish(winchData)
 
 
@@ -108,11 +108,8 @@ def controllerInput(data):
         roboclaw.SpeedAccelM1(address,wch.ACCELTICKS,int(desiredSpeedInTicks))
     
     heightData = calculateHeight()
-    heightTicks = heightData[1] #in ticks
-    heightmm = heightData[0]
-
-    winchData.height = heightmm/1000 # in meters
-    winchData.heightTicks = heightTicks 
+    winchData.height = heightData[0]/1000 # height in meters
+    winchData.heightTicks =  heightData[1]# height in ticks
     pub.publish(winchData)
     
      
