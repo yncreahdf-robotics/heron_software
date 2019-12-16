@@ -8,11 +8,6 @@
 
         <node name="drive" pkg="heron" type="drive" output="screen" respawn="true" />
 
-        <node name="xbox_controler" pkg="joy" type="joy_node" >
-            <param name="dev" type="string" value="/dev/input/js0" />
-            <param name="autorepeat_rate" value="20" />
-        </node>
-
     </group>
 
     <include file="$(find heron)/src/launch/xboxController.launch" /> 

@@ -18,14 +18,6 @@
 
         <node name="tf_broadcaster" pkg="heron" type="tf_broadcaster" respawn="true" />
 
-        
-        <node name="xbox_controler" pkg="joy" type="joy_node" >
-            <param name="dev" type="string" value="/dev/input/js0" />
-            <param name="autorepeat_rate" value="20" />
-        </node>
-
-        <node name="remote" pkg="heron" type="remote.py" respawn="true" />
-
     </group>
 
 </launch>
