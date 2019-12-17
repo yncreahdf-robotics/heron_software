@@ -6,6 +6,8 @@
         <param name="frame_id" value="$(optenv HERON_TF Heron00)/map" />
     </node>
 
+    <node name="simple_navigation_goal" pkg="heron" type="simple_navigation_goal" ns="$(arg robot_name)"/> 
+
 
     <include file="$(find heron)/src/launch/move_base.launch">
          <arg name="namespace_prefix" value="$(arg robot_name)"/>

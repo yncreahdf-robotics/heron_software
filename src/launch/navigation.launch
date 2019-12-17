@@ -13,5 +13,4 @@
     <arg name="robot_name" value="$(optenv HERON_ID Heron00)"/>
   </include>
   
-
 </launch>

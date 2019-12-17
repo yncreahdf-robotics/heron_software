@@ -12,8 +12,7 @@
         </node>
 
         <!-- <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" /> -->
-        
-        <include file="$(find heron)/src/launch/xboxController.launch" /> 
+
     </group>
 
     <include file="$(find heron)/src/launch/xboxController.launch" />

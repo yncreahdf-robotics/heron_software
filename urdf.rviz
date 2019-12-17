@@ -291,12 +291,12 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: local costmap
       Topic: /Heron01/move_base/local_costmap/costmap
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/Polygon
       Color: 25; 255; 0
@@ -346,25 +346,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.90609074
+      Distance: 14.3397703
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 5.59437656
-        Y: 3.91652751
-        Z: -0.779325843
+        X: 5.53592587
+        Y: 5.49561453
+        Z: -0.437813789
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.639797211
+      Pitch: 0.329797328
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.545414746
+      Yaw: 1.46041882
     Saved: ~
 Window Geometry:
   Displays:
