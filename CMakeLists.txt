@@ -7,7 +7,8 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   std_msgs
   nav_msgs
-  message_generation)
+  message_generation
+  actionlib)
 
 catkin_python_setup()
 
@@ -18,6 +19,10 @@ add_message_files(
   FILES
   ValueUnitFloat.msg
   ValueUnitInt.msg
+  IRSensors.msg
+  USIRSensors.msg
+  winch.msg
+  Motion.msg
 )
 
 generate_messages(
@@ -59,6 +64,7 @@ add_dependencies(odom heron_generate_messages_cpp)
 add_executable(tf_broadcaster src/nodes/tf/tf_broadcaster.cpp)
 target_link_libraries(tf_broadcaster ${catkin_LIBRARIES})
 #add_dependencies(tf_broadcaster heron_generate_messages_cpp)
+
 
 add_executable(tf_robot src/nodes/tf/tf_robot.cpp)
 target_link_libraries(tf_robot ${catkin_LIBRARIES})

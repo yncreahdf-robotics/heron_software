@@ -1,20 +1,15 @@
 <launch>
-    <group ns="heron01">
+    <group ns="$(optenv HERON_ID Heron00)">
 
         <param name="frontDriver_port" type="string" value="/dev/roboteq_front" />
 		<param name="backDriver_port" type="string" value="/dev/roboteq_back" />	
 
-        <node name="xbox_controler" pkg="joy" type="joy_node" respawn="true" >
-            <param name="dev" type="string" value="/dev/input/js0" />
-            <param name="autorepeat_rate" value="2" />
-        </node>
-
-        <node name="controller" pkg="heron" type="controller.py" output="screen" /> 
+        <node name="winch" pkg="heron" type="winch.py" output="screen" /> 
 
         <node name="drive" pkg="heron" type="drive" output="screen" respawn="true" />
-        
-        <node name="odom" pkg="heron" type="odom" output="screen" respawn="true" />
 
     </group>
+
+    <include file="$(find heron)/src/launch/xboxController.launch" /> 
 
 </launch>

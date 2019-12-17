@@ -4,6 +4,21 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="heron_urdf">
+
+  <link name="base_footprint">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+      <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+  <joint name="base_footprint" type="fixed">
+    <origin xyz="0 0 0.10" rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+
   <link
     name="base_link">
     <inertial>
@@ -44,6 +59,8 @@
       </geometry>
     </collision>
   </link>
+
+
   <link
     name="wheel_FL">
     <inertial>
@@ -86,8 +103,8 @@
     name="wheel_FL"
     type="continuous">
     <origin
-      xyz="0.199955093786635 0.186235 -0.0610768464243844"
-      rpy="1.5707963267949 1.5707963267949 -1.5707963267949" />
+      xyz="0.2 0.216235 -0.06"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -98,6 +115,26 @@
       k_velocity="0" />
     <limit effort="9.1201845" velocity="8.79645942"/>
   </joint>
+  <!-- Transmission is important to link the joints and the controller (see summit_xl_control/config/summit_xl_control.yaml)-->
+  <transmission name="wheel_FL_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="wheel_FL" >
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="wheel_FL_motor">
+       <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <gazebo reference="wheel_FL">
+	  <mu1 value="1.0"/>
+		<mu2 value="1.0"/>
+		<kp value="10000000.0" />
+		<kd value="1.0" />
+		<fdir1 value="1 0 0"/>
+        <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
   <link
     name="wheel_FR">
     <inertial>
@@ -140,8 +177,8 @@
     name="wheel_FR"
     type="continuous">
     <origin
-      xyz="0.199955093786635 -0.186235 -0.0610768464243844"
-      rpy="1.5707963267949 1.5707963267949 1.5707963267949" />
+      xyz="0.2 -0.216235 -0.06"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -152,6 +189,26 @@
       k_velocity="0" />
     <limit effort="9.1201845" velocity="8.79645942"/>
   </joint>
+  <!-- Transmission is important to link the joints and the controller (see summit_xl_control/config/summit_xl_control.yaml)-->
+  <transmission name="wheel_FR_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="wheel_FR" >
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="wheel_FR_motor">
+       <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <gazebo reference="wheel_FR">
+	  <mu1 value="1.0"/>
+		<mu2 value="1.0"/>
+		<kp value="10000000.0" />
+		<kd value="1.0" />
+		<fdir1 value="1 0 0"/>
+        <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
   <link
     name="wheel_BL">
     <inertial>
@@ -194,8 +251,8 @@
     name="wheel_BL"
     type="continuous">
     <origin
-      xyz="-0.200044906213365 0.186235 -0.0610768464243844"
-      rpy="1.5707963267949 1.5707963267949 -1.5707963267949" />
+      xyz="-0.2 0.216235 -0.06"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -206,6 +263,26 @@
       k_velocity="0" />
     <limit effort="9.1201845" velocity="8.79645942"/>
   </joint>
+  <!-- Transmission is important to link the joints and the controller (see summit_xl_control/config/summit_xl_control.yaml)-->
+  <transmission name="wheel_BL_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="wheel_BL" >
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="wheel_BL_motor">
+       <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <gazebo reference="wheel_BL">
+	  <mu1 value="1.0"/>
+		<mu2 value="1.0"/>
+		<kp value="10000000.0" />
+		<kd value="1.0" />
+		<fdir1 value="1 0 0"/>
+        <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
   <link
     name="wheel_BR">
     <inertial>
@@ -248,8 +325,8 @@
     name="wheel_BR"
     type="continuous">
     <origin
-      xyz="-0.200044906213365 -0.186235 -0.0610768464243844"
-      rpy="1.5707963267949 1.5707963267949 1.5707963267949" />
+      xyz="-0.2 -0.216235 -0.06"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -260,6 +337,26 @@
       k_velocity="0" />
     <limit effort="9.1201845" velocity="8.79645942"/>
   </joint>
+  <!-- Transmission is important to link the joints and the controller (see summit_xl_control/config/summit_xl_control.yaml)-->
+  <transmission name="wheel_BR_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="wheel_BR" >
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="wheel_BR_motor">
+       <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <gazebo reference="wheel_BR">
+	  <mu1 value="1.0"/>
+		<mu2 value="1.0"/>
+		<kp value="10000000.0" />
+		<kd value="1.0" />
+		<fdir1 value="1 0 0"/>
+        <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
   <link
     name="support">
     <inertial>
@@ -304,7 +401,7 @@
     name="support"
     type="fixed">
     <origin
-      xyz="0 0 0"
+      xyz="-0.3 0 0"
       rpy="0 0 0" />
     <parent
       link="base_link" />
@@ -313,6 +410,8 @@
     <safety_controller
       k_velocity="0" />
   </joint>
+
+
   <link
     name="plate">
     <inertial>
@@ -357,14 +456,14 @@
     name="plate"
     type="prismatic">
     <origin
-      xyz="0 0 0"
+      xyz="-0.32 0 0.13"
       rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
       link="plate" />
     <axis
-      xyz="0 1 0" />
+      xyz="0 0 1" />
     <safety_controller
       k_velocity="0" />
     <limit effort="147" lower="0.0" upper="0.386" velocity="0.039"/>

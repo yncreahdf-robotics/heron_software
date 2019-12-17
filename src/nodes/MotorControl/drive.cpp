@@ -36,13 +36,21 @@ class Driver
 		RoboteqDevice backDriver;
 
 		// custom msg
-		heron::Encoders encs;
+		heron::Encoders encs_msg;
 
-		int tmp_encFl;
-		int tmp_encFr;
-		int tmp_encBl;
-		int tmp_encBr;
+		struct WheelsEncoders
+		{
+			int Fl, Fr, Bl, Br;
+		};
 
+		// tmp variable to stoge encoders data
+		WheelsEncoders encs;
+		WheelsEncoders tmp_encs;
+
+
+		/* 
+		Saturate motor command 
+		*/
 		double saturate(double value, double sat)
 		{
 			if(value > sat)
@@ -54,8 +62,20 @@ class Driver
 				return value;
 			}
 			
-		}
+		}// End saturate
 
+
+		/* 
+		Initialize the encoders by loading the current 
+		value to tmp variables
+		*/
+		void initEncoders()
+		{
+			frontDriver.GetValue(_ABCNTR, 2, tmp_encs.Fl);
+			frontDriver.GetValue(_ABCNTR, 1, tmp_encs.Fr);
+			backDriver.GetValue(_ABCNTR, 2, tmp_encs.Bl);
+			backDriver.GetValue(_ABCNTR, 1, tmp_encs.Br);
+		}// End initEncoders
 
 
 	public:
@@ -65,13 +85,9 @@ class Driver
 			//Subscribe to cmd_vel topic and call the setCommands function 
 			sub = n.subscribe("cmd_vel", 1, &Driver::setCommands, this);
 			encoders_pub = n.advertise<heron::Encoders>("sensor_encs", 10);
+		}// End Constructor
 
-			tmp_encFl = 0;
-			tmp_encFr = 0;
-			tmp_encBl = 0;
-			tmp_encBr = 0;
-		}
-		~Driver() {}
+		~Driver() {}// End Destructor
 
 		/*
 		Initialize connection between RoboteQ drivers and computer.
@@ -101,9 +117,11 @@ class Driver
 			}
 			else
 			{
+				initEncoders();
 				return 0;
 			}	
-		}
+		}// End connect
+
 
 		/*
 		Disconnect RoboteQ drivers from computer.
@@ -113,33 +131,85 @@ class Driver
 			cout << "Disconnecting Drivers ..." << endl;
 			frontDriver.Disconnect();
 			backDriver.Disconnect();
-		}
+		}// End disconnect
 
 
+		/* 
+		Get the absolute encoder value from the driver 
+		Filter the values to get rid of the "jumps"
+		Publish the diff over a topic to the odom 
+		*/
 		void pubEncoders()
 		{
-			// tmp variable to stoge encoders data
-			int enc_value;
+			WheelsEncoders diff;
 
-			//Get values of encoders and calculate difference since the last time the function was called		
-			frontDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncFl = tmp_encFl - enc_value;
-			tmp_encFl = enc_value;
+			//Get values of encoders through the drivers		
+			frontDriver.GetValue(_ABCNTR, 2, encs.Fl);
+			frontDriver.GetValue(_ABCNTR, 1, encs.Fr);
+			backDriver.GetValue(_ABCNTR, 2, encs.Bl);
+			backDriver.GetValue(_ABCNTR, 1, encs.Br);
 
-			frontDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncFr = tmp_encFr - enc_value;
-			tmp_encFr = enc_value;
+			// Compute the difference since the last time the function was called
+			diff.Fl = tmp_encs.Fl - encs.Fl;
+			diff.Fr = tmp_encs.Fr - encs.Fr;
+			diff.Bl = tmp_encs.Bl - encs.Bl;
+			diff.Br = tmp_encs.Br - encs.Br;
 
-			backDriver.GetValue(_ABCNTR, 2, enc_value);
-			encs.EncBl = tmp_encBl - enc_value;
-			tmp_encBl = enc_value;
+			//debug
+			//ROS_INFO("Encoders Fl%d Fr%d Bl%d Br%d", diff.Fl, diff.Fr, diff.Bl, diff.Br);
 
-			backDriver.GetValue(_ABCNTR, 1, enc_value);
-			encs.EncBr = tmp_encBr - enc_value;
-			tmp_encBr = enc_value;
+			// if datas are plosible (no jump)
+			if(abs(diff.Fl) < THRESHOLD_DELTA_ENCODERS
+			&& abs(diff.Fr) < THRESHOLD_DELTA_ENCODERS
+			&& abs(diff.Bl) < THRESHOLD_DELTA_ENCODERS
+			&& abs(diff.Br) < THRESHOLD_DELTA_ENCODERS)
+			{
+				// Update the values to send to odom
+				encs_msg.EncFl = diff.Fl;
+				encs_msg.EncFr = diff.Fr;
+				encs_msg.EncBl = diff.Bl;
+				encs_msg.EncBr = diff.Br;
+				
+				// Store the current value for next loop
+				tmp_encs.Fl = encs.Fl;
+				tmp_encs.Fr = encs.Fr;
+				tmp_encs.Bl = encs.Bl;
+				tmp_encs.Br = encs.Br;
+			}
+			else
+			{
+				// Don't change the values to send to odom
+				// So it sends the previous one 
 
-			encoders_pub.publish(encs);
+				ROS_INFO("Encoders Jump detected");
+
+				// catch up the value error on the failing encoder(s)
+				if(abs(encs.Fl) > THRESHOLD_DELTA_ENCODERS)
+				{
+					tmp_encs.Fl = encs.Fl;
+				}
+				if(abs(encs.Fr) > THRESHOLD_DELTA_ENCODERS)
+				{
+					tmp_encs.Fr = encs.Fr;
+				}
+				if(abs(encs.Bl) > THRESHOLD_DELTA_ENCODERS)
+				{
+					tmp_encs.Bl = encs.Bl;
+				}
+				if(abs(encs.Br) > THRESHOLD_DELTA_ENCODERS)
+				{
+					tmp_encs.Br = encs.Br;
+				}
+
+			}
+
+			// debug
+			//cout << "Published Encoders: " << encs_msg.EncFl << ";" << encs_msg.EncFr << ";" << encs_msg.EncBl << ";" << encs_msg.EncBr << endl;
+
+			// Publish the datas
+			encoders_pub.publish(encs_msg);
 		}
+
 
 		/*
 		setCommands is the callback fonction called when a Twist message is published on the command velocity topic (cmd_vel).
@@ -159,13 +229,12 @@ class Driver
 
 			//Equations for mecanum wheeled robot
 
-			frontLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000); 
-			frontRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
-			backLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
-			backRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+			frontLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000); 
+			frontRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+			backLeftSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x - msg.linear.y + thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
+			backRightSpeed = saturate((1 / WHEEL_RADIUS) * (msg.linear.x + msg.linear.y - thetad * (WTOW_LENGHT + WTO_WIDTH)) * 1000/8.8 , 1000);
 
 			
-
 			// usefull for debuging purpose
 			// cout << "FL motor speed :" << frontLeftSpeed << " FR motor speed :" << frontRightSpeed << endl;
 			// cout << "BL motor speed :" << backLeftSpeed << " BR motor speed :" << backRightSpeed << endl;
@@ -205,7 +274,6 @@ int main(int argc, char *argv[])
 		
 		r.sleep();
 	}
-	// ros::spin();
 
 	drivers.disconnect();
 
