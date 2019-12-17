@@ -37,13 +37,13 @@ def posInput(data):
     
     elif(heightDesired_mm >= wch.MAXHEIGHT):
         heightDesired_mm = wch.MAXHEIGHT-1
-
+   
 
     desiredPos = int((heightDesired_mm-wch.MINHEIGHT)*wch.TICKSPERMM)
     rospy.loginfo("Position goal: %d ",desiredPos)
-    roboclaw.SpeedAccelDeccelPositionM1(address,wch.ACCELTICKS,wch.MAXSPEEDTICKS,wch.DECELTICKS,desiredPos,0)
+    roboclaw.SpeedAccelDeccelPositionM1(address,wch.ACCELTICKS,wch.MAXSPEEDTICKS,wch.DECELTICKS,desiredPos,1)
 
-    while(roboclaw.ReadEncM1(address)[1]!= desiredPos):
+    while(roboclaw.ReadSpeedM1(address)[1]!= 0):
         heightData = calculateHeight()
         winchData.height = heightData[0]/1000 # height in meters
         winchData.heightTicks =  heightData[1]# height in ticks
@@ -59,7 +59,7 @@ def posInput(data):
 
 def calculateHeight():
     heightTicks = roboclaw.ReadEncM1(address)[1]
-    height = wch.MINHEIGHT + heightTicks/wch.TICKSPERMM
+    height = float(wch.MINHEIGHT + float(heightTicks)/wch.TICKSPERMM)
     return(height, heightTicks)
 
 
@@ -144,6 +144,16 @@ def start():
 
     if(roboclaw.Open(dev_name, baud_rate)):
         rospy.loginfo("Connected to roboclaw")
+
+        statut=roboclaw.ReadError(address)[1]
+        rospy.loginfo("initialization : going to home")
+        while(statut != 4194304):
+            roboclaw.SpeedAccelM1(address,wch.ACCELTICKS,-wch.MAXSPEEDTICKS)
+            statut=roboclaw.ReadError(address)[1]
+        
+        rospy.loginfo("winch initialized")
+
+
         roboclaw.SpeedAccelM1(address,80000, 0)
         roboclaw.ResetEncoders(address)
         rospy.logdebug("dev %s", dev_name)
