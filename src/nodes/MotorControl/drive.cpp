@@ -129,9 +129,25 @@ class Driver
 		void disconnect()
 		{
 			cout << "Disconnecting Drivers ..." << endl;
-			frontDriver.Disconnect();
-			backDriver.Disconnect();
+			if(frontDriver.IsConnected())
+			{
+				frontDriver.Disconnect();
+			}
+			
+			if(backDriver.IsConnected())
+			{
+				backDriver.Disconnect();
+			}
 		}// End disconnect
+
+
+		/*
+		Return whether or not the drivers are connected.
+		*/
+		bool getStatus()
+		{
+			return frontDriver.IsConnected() && backDriver.IsConnected();
+		}// End status
 
 
 		/* 
@@ -266,7 +282,7 @@ int main(int argc, char *argv[])
 
 
 	ros::Rate r(100);
-	while (ros::ok())
+	while (ros::ok() && drivers.getStatus())
 	{
 		ros::spinOnce();
 
