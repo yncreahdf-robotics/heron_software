@@ -1,0 +1,13 @@
+scan_filter_chain:
+- name: box_filter
+  type: laser_filters/LaserScanBoxFilter
+  params:
+    box_frame: Heron01TF/base_link
+    max_x: 0.32
+    max_y: 0.27
+    max_z: 1
+    min_x: -0.37
+    min_y: -0.27
+    min_z: -1
+    invert: false
+
