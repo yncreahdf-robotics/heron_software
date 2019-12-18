@@ -126,7 +126,7 @@ public:
         geometry_msgs::TransformStamped odom_trans;
         odom_trans.header.stamp = current_time;
         odom_trans.header.frame_id = tf_prefix + "odom";
-        odom_trans.child_frame_id = tf_prefix + "base_link";
+        odom_trans.child_frame_id = tf_prefix + "base_footprint";
 
         odom_trans.transform.translation.x = pose.x;
         odom_trans.transform.translation.y = pose.y;

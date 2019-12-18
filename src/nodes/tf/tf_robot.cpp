@@ -4,8 +4,8 @@
 #include <tf/transform_broadcaster.h>
 #include "heron/winch.h"
 #include <sensor_msgs/JointState.h>
-#define MAX_PLATE 1071.0
-#define MIN_PLATE 695.0
+#define MAX_PLATE 1.071
+#define MIN_PLATE 0.695
 
 using namespace std;
 sensor_msgs::JointState joint_state;
@@ -17,7 +17,7 @@ void winchCallback(const heron::winch& msg)
     float plate_height;
     if (msg.height > MAX_PLATE)
     {
-      plate_height = (MAX_PLATE - MIN_PLATE) / 1000;
+      plate_height = (MAX_PLATE - MIN_PLATE);
     }
     else if (msg.height < MIN_PLATE)
     {
@@ -25,7 +25,7 @@ void winchCallback(const heron::winch& msg)
     }
     else
     {
-      plate_height = (msg.height - MIN_PLATE) / 1000;
+      plate_height = (msg.height - MIN_PLATE);
     }
 
     plate_pub.publish(joint_state);
