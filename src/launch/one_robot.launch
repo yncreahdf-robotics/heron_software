@@ -2,7 +2,7 @@
  
     <arg name="robot_name"/>
 
-    <node name="map_server" pkg="map_server" type="map_server" ns="$(arg robot_name)" args="$(find heron)/map/arenedemobg.pgm 0.05" >
+    <node name="map_server" pkg="map_server" type="map_server" ns="$(arg robot_name)" args="$(find heron)/map/demo.pgm 0.05" >
         <param name="frame_id" value="$(optenv HERON_TF Heron00)/map" />
     </node>
 
