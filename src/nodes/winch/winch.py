@@ -90,7 +90,7 @@ def controllerInput(data):
         roboclaw.SpeedAccelM1(address,80000,0)
 
     #checks if winch is near to bottom
-    if (heightTicks < 100):  
+    if (heightTicks < 10):  
         if(desiredSpeedInTicks < 0):
             roboclaw.SpeedAccelM1(address,80000,0)
         else:
