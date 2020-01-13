@@ -146,6 +146,7 @@ def start():
         rospy.loginfo("Connected to roboclaw")
 
         statut=roboclaw.ReadError(address)[1]
+        rospy.loginfo("4194304 %d", statut)
         rospy.loginfo("initialization : going to home")
         while(statut != 4194304):
             roboclaw.SpeedAccelM1(address,wch.ACCELTICKS,-wch.MAXSPEEDTICKS)
