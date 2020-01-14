@@ -44,6 +44,7 @@ def posInput(data):
     roboclaw.SpeedAccelDeccelPositionM1(address,wch.ACCELTICKS,wch.MAXSPEEDTICKS,wch.DECELTICKS,desiredPos,1)
 
     while(roboclaw.ReadSpeedM1(address)[1]!= 0):
+        rospy.loginfo("Speed : %d", roboclaw.ReadSpeedM1(address)[1])
         heightData = calculateHeight()
         winchData.height = heightData[0]/1000 # height in meters
         winchData.heightTicks =  heightData[1]# height in ticks
