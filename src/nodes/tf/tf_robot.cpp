@@ -15,7 +15,7 @@ ros::Publisher plate_pub;
 void winchCallback(const heron::winch& msg) 
   {
     float plate_height;
-
+    
     if (msg.height > MAX_PLATE)
     {
       plate_height = (MAX_PLATE - MIN_PLATE);
@@ -48,11 +48,9 @@ int main(int argc, char** argv){
   joint_state.name.push_back("plate");
   joint_state.position.push_back(0);
 
-  while(n.ok()){
-    ros::spinOnce();
-  
-    sub = n.subscribe("winch_Height", 10, winchCallback);
-    plate_pub = n.advertise<sensor_msgs::JointState>("plate_joint_states",10);
 
-  }
+  sub = n.subscribe("winch_Height", 10, winchCallback);
+  plate_pub = n.advertise<sensor_msgs::JointState>("plate_joint_states",10);
+
+  ros::spin();
 }

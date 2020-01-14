@@ -7,7 +7,7 @@ from std_msgs.msg import Int16,Float32
 from heron.msg import winch as MsgWinch
 import rospy
 import sys
-
+import time
 
 # QPPS is the speed of the encoder when the motor is at 100% power
 # adresse 65 -> SpeedAccelDeccelPositionM1(adress, accel, speed, deccel, position, buffer)
@@ -42,6 +42,7 @@ def posInput(data):
     desiredPos = int((heightDesired_mm-wch.MINHEIGHT)*wch.TICKSPERMM)
     rospy.loginfo("Position goal: %d ",desiredPos)
     roboclaw.SpeedAccelDeccelPositionM1(address,wch.ACCELTICKS,wch.MAXSPEEDTICKS,wch.DECELTICKS,desiredPos,1)
+    time.sleep(0.1)
 
     while(roboclaw.ReadSpeedM1(address)[1]!= 0):
         heightData = calculateHeight()
@@ -90,7 +91,7 @@ def controllerInput(data):
         roboclaw.SpeedAccelM1(address,80000,0)
 
     #checks if winch is near to bottom
-    if (heightTicks < 100):  
+    if (heightTicks < 10):  
         if(desiredSpeedInTicks < 0):
             roboclaw.SpeedAccelM1(address,80000,0)
         else:
@@ -146,6 +147,7 @@ def start():
         rospy.loginfo("Connected to roboclaw")
 
         statut=roboclaw.ReadError(address)[1]
+        rospy.loginfo("4194304 %d", statut)
         rospy.loginfo("initialization : going to home")
         while(statut != 4194304):
             roboclaw.SpeedAccelM1(address,wch.ACCELTICKS,-wch.MAXSPEEDTICKS)

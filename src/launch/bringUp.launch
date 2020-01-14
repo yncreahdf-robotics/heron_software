@@ -11,7 +11,7 @@
         
         <node name="odom" pkg="heron" type="odom" output="screen" respawn="true" />
 
-        <node name="winch" pkg="heron" type="winch.py" />
+        <node name="winch" pkg="heron" type="winch.py" output="screen"/>
 
         <node name="lpms_imu" pkg="lpms_imu" type="lpms_imu_node" output="screen" respawn="true" />
         
