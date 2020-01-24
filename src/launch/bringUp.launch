@@ -26,7 +26,7 @@
         <node name="xbox_controler" pkg="joy" type="joy_node" >
             <param name="dev" type="string" value="/dev/input/js0" />
         </node>
-        <node name="recordPosition" pkg="heron" type="recordPosition" />
+        <node name="recordPosition" pkg="heron" type="recordPosition.py" />
 
     </group>
 
