@@ -20,13 +20,7 @@
         <node name="tf_broadcaster" pkg="heron" type="tf_broadcaster" respawn="true" />
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
            <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" />
-        </node>  
-
-
-        <node name="xbox_controler" pkg="joy" type="joy_node" >
-            <param name="dev" type="string" value="/dev/input/js0" />
-        </node>
-        <node name="recordPosition" pkg="heron" type="recordPosition.py" />
+        </node>          
 
     </group>
 

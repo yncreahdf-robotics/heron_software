@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # starts the node
     rospy.init_node('remote')
 
-    file = open("positions.txt", "w")
+    file = open("../../../map/positions.txt", "w")
     file.write("Next follows the positions registered in the same order than recorded \n")
     file.close()
 
