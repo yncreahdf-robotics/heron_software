@@ -8,7 +8,7 @@
 
     <node name="simple_navigation_goal" pkg="heron" type="simple_navigation_goal" ns="$(arg robot_name)"/> 
 
-    <node name="recordPositions" pkg="heron" type="recordPositions.py" ns="$(arg robot_name)"/>
+    <node name="recordPositions" pkg="heron" type="recordPositions.py" ns="$(arg robot_name)" output="screen" />
 
     <include file="$(find heron)/src/launch/move_base.launch">
          <arg name="namespace_prefix" value="$(arg robot_name)"/>
