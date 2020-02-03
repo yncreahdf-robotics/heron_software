@@ -23,6 +23,7 @@ add_message_files(
   USIRSensors.msg
   winch.msg
   Motion.msg
+  Encoders.msg
 )
 
 generate_messages(
