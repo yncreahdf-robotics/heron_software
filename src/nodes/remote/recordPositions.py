@@ -16,7 +16,7 @@ def callback(data):
     if(data.buttons[0]):
         if(tmp_pos != positionMsg):
             file = open("../MapKeyPos.txt", "a")
-            file.write("position " + str(index) + " ")
+            file.write("position " + str(index) + " :")
             file.write(positionMsg)
             print("writting Position" + str(index) + "into the file.")
             file.close()
