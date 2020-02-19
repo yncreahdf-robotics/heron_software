@@ -75,6 +75,8 @@ foreach(dir config launch meshes urdf)
 		DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
 endforeach(dir)
 
+add_executable(simple_navigation_goal src/nodes/actions/simple_navigation_goal.cpp)
+target_link_libraries(simple_navigation_goal ${catkin_LIBRARIES})
 
 
 
