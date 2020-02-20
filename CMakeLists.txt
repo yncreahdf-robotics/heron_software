@@ -19,8 +19,6 @@ add_message_files(
   FILES
   ValueUnitFloat.msg
   ValueUnitInt.msg
-  IRSensors.msg
-  USIRSensors.msg
   winch.msg
   Motion.msg
   Encoders.msg
