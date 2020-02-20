@@ -23,5 +23,6 @@
         </node>          
 
     </group>
-
+    
+    <include file="$(find heron)/src/launch/xboxController.launch" /> 
 </launch>

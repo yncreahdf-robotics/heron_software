@@ -1,10 +1,23 @@
 obstacle_range: 10 #updates obstacles at 10m from the robot
-raytrace_range: 1
+raytrace_range: 10
 footprint: [[0.3, 0.25], [-0.364, 0.25], [-0.364, -0.25], [0.3, -0.25]]
 #robot_radius: ir_of_robot
-inflation_radius: 0.15
+inflation_radius: 0.5
 
 observation_sources: laser_scan_sensor 
 
 laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: scan, marking: true, clearing: true}
+
+recovery_behaviors:
+  - name: 'costmap_reset_conservative'
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+  - name: 'aggressive_reset'
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+costmap_reset_conservative:
+  reset_distance: 0.01
+  layer_names: ["obstacle_layer"]
+
+aggressive_reset:
+  reset_distance: 0.0
+  layer_names: ['obstacle_layer']
 

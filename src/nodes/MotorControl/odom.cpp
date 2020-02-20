@@ -148,7 +148,7 @@ public:
         odom.pose.pose.orientation = odom_quat;
 
         //set the velocity
-        odom.child_frame_id = tf_prefix + "base_link";
+        odom.child_frame_id = tf_prefix + "base_footprint";
         odom.twist.twist.linear.x = speed.vx;
         odom.twist.twist.linear.y = speed.vy;
         odom.twist.twist.angular.z = speed.vth;

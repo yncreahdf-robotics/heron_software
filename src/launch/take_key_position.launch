@@ -1,0 +1,18 @@
+<launch>
+    <group ns="$(optenv HERON_ID Heron00)">
+        <param name="tf_prefix" value="$(optenv HERON_TF Heron00)" />
+
+        <node name="map_server" pkg="map_server" type="map_server" args="$(find heron)/map/demo.pgm 0.05" >
+            <param name="frame_id" value="$(optenv HERON_TF Heron00)/map" />
+        </node>
+     
+        <node name="recordPositions" pkg="heron" type="recordPositions.py" output="screen" />
+    </group>   
+
+
+    <include file="$(find heron)/src/launch/display_navigation.launch" />
+    
+    <include file="$(find heron)/src/launch/amcl.launch">
+         <arg name="robot_namespace" value="$(optenv HERON_ID Heron00)"/>
+    </include> 
+</launch>

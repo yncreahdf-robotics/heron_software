@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find heron)/src/launch/navigation.launch" />
+    <include file="$(find heron)/src/launch/display_navigation.launch" /> 
+</launch>
